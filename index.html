@@ -1423,8 +1423,8 @@
         const handleTouchEnd = () => setIsDragging(false);
 
         return (
-          <div className="flex flex-col h-screen bg-white overflow-hidden">
-            {/* --- HEADER AREA (FIXED WIDTH) --- */}
+          <div className="flex flex-col h-screen bg-white overflow-hidden relative">
+            {/* --- HEADER AREA (Desktop) --- */}
             <nav className="z-50 bg-white border-b border-slate-100 h-16 shrink-0">
               <div className="max-w-4xl mx-auto px-4 md:px-6 h-full flex justify-between items-center w-full">
                 <div
@@ -1438,7 +1438,6 @@
                     TravelPlanner
                   </span>
                 </div>
-
                 <div className="flex items-center gap-3">
                   <button className="p-2 text-brand-500 bg-brand-50 rounded-xl transition-all">
                     <Icon name="User" size={22} />
@@ -1447,9 +1446,8 @@
               </div>
             </nav>
 
-            {/* --- MAIN CONTENT AREA --- */}
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-              {/* Боковая панель (Desktop) */}
+              {/* Сайдбар (Desktop) */}
               <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-6 space-y-6 shrink-0 z-20 relative">
                 <div
                   className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
@@ -1473,16 +1471,6 @@
                 </button>
               </div>
 
-              {/* Мобильная навигация (Назад в чат) */}
-              <div className="md:hidden absolute top-4 left-4 z-20 flex items-center justify-between pointer-events-none">
-                <div
-                  className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
-                  onClick={onChat}
-                >
-                  <Icon name="ArrowLeft" size={20} />
-                </div>
-              </div>
-
               {/* КАРТА (ФОН) */}
               <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 map-bg z-0 overflow-hidden group">
                 <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[10vh] md:pt-0 pointer-events-none px-4">
@@ -1494,7 +1482,7 @@
                       КАРТА ПРОФИЛЯ
                     </h3>
                     <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
-                      История ваших перемещений и сохраненные локации
+                      История ваших перемещений и локации
                     </p>
                   </div>
                 </div>
@@ -1507,30 +1495,43 @@
                   height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
                 }}
               >
-                {/* Зона перетаскивания (только моб) */}
-                <div
-                  className="w-full pt-3 pb-1 md:hidden cursor-grab active:cursor-grabbing touch-none flex justify-center shrink-0 bg-white rounded-t-[2.5rem]"
-                  onTouchStart={handleTouchStart}
-                  onTouchMove={handleTouchMove}
-                  onTouchEnd={handleTouchEnd}
-                >
-                  <div className="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+                {/* Зона перетаскивания и Навигация (Мобильная) */}
+                <div className="w-full pt-3 shrink-0 bg-white rounded-t-[2.5rem] md:rounded-none border-b border-slate-50">
+                  <div
+                    className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 md:hidden cursor-grab active:cursor-grabbing touch-none"
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  ></div>
+
+                  <div className="px-4 md:px-6 py-2 flex items-center justify-between">
+                    {/* Кнопка Назад слева */}
+                    <button
+                      onClick={onChat}
+                      className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors"
+                    >
+                      <Icon name="ArrowLeft" size={16} /> Назад
+                    </button>
+
+                    <h1 className="text-sm font-bold text-slate-900 md:hidden">
+                      Мой профиль
+                    </h1>
+
+                    {/* Кнопка Выход справа (красноватая) */}
+                    <button
+                      onClick={onBack}
+                      className="text-rose-500 hover:text-rose-600 flex items-center gap-1 text-sm font-bold transition-colors"
+                    >
+                      Выход
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
-                  <div className="flex items-center justify-between mb-8">
-                    <h1 className="text-2xl font-extrabold text-slate-900 hidden md:block">
-                      Профиль
-                    </h1>
-                    <button
-                      onClick={onBack}
-                      className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors md:hidden"
-                    >
-                      <Icon name="ArrowLeft" size={16} /> Выход
-                    </button>
-                  </div>
+                  <h1 className="text-2xl font-extrabold text-slate-900 hidden md:block mb-8">
+                    Профиль
+                  </h1>
 
-                  {/* Инфо пользователя */}
                   <div className="flex flex-col items-center md:items-start mb-10">
                     <div className="w-24 h-24 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
                       <Icon name="User" size={40} className="text-slate-300" />
@@ -1543,7 +1544,6 @@
                     </p>
                   </div>
 
-                  {/* Табы */}
                   <div className="flex p-1 bg-slate-50 rounded-2xl mb-6">
                     <button
                       onClick={() => setActiveTab('routes')}
@@ -1559,24 +1559,15 @@
                     </button>
                   </div>
 
-                  {/* Карточка контента */}
-                  <div className="flex-1 min-h-[250px] bg-slate-50 rounded-[2rem] border border-slate-100 relative group overflow-hidden">
-                    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500">
-                        <Icon name="ArrowLeft" size={14} />
-                      </button>
-                      <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500 transform rotate-180">
-                        <Icon name="ArrowLeft" size={14} />
-                      </button>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-medium italic">
+                  <div className="flex-1 min-h-[200px] bg-slate-50 rounded-[2rem] border border-slate-100 relative overflow-hidden flex items-center justify-center">
+                    <div className="text-slate-300 text-sm font-medium italic">
                       {activeTab === 'routes'
                         ? 'Нет активных маршрутов'
                         : 'Список пуст'}
                     </div>
                   </div>
 
-                  <button className="mt-8 w-full py-4 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 hover:bg-brand-600 transition-all active:scale-95">
+                  <button className="mt-8 w-full py-4 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 active:scale-95 transition-all">
                     НОВОЕ ПУТЕШЕСТВИЕ
                   </button>
                 </div>
