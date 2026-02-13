@@ -1146,7 +1146,7 @@
         );
       }
 
-      // --- PLANNER PAGE (Только цвета обновлены) ---
+      // --- PLANNER PAGE (Иконки "плюс" теперь синие) ---
       function PlannerPage({ onBack }) {
         const categories = [
           { id: 'city', label: 'Город', icon: 'MapPin' },
@@ -1188,7 +1188,9 @@
                           {cat.label}
                         </span>
                       </div>
-                      <div className="w-4 h-4 md:w-[18px] md:h-[18px] rounded-full bg-brand-amber text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
+
+                      {/* ИСПРАВЛЕНО: Фон иконки "+" теперь синий (bg-brand-sky) */}
+                      <div className="w-4 h-4 md:w-[18px] md:h-[18px] rounded-full bg-brand-sky text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
                         <Icon name="Plus" size={10} className="shrink-0" />
                       </div>
                     </div>
