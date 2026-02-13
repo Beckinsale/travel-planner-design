@@ -1248,82 +1248,88 @@
         };
 
         return (
-          <div className="flex flex-col md:flex-row h-screen bg-white overflow-hidden relative">
-            {/* Боковая панель (только десктоп) */}
-            <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-4 space-y-6 shrink-0 z-20 relative">
-              <div
-                className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
-                onClick={onBack}
-              >
-                <Icon name="Map" size={20} />
-              </div>
-              <div className="flex-1 flex flex-col space-y-4 mt-4">
-                <button
-                  className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20"
-                  onClick={onProfile}
+          <div className="flex flex-col h-screen bg-white overflow-hidden">
+            {/* --- HEADER AREA (FIXED WIDTH) --- */}
+            <nav className="z-50 bg-white border-b border-slate-100 h-16 shrink-0">
+              {/* Контейнер теперь max-w-4xl как на главной */}
+              <div className="max-w-4xl mx-auto px-4 md:px-6 h-full flex justify-between items-center w-full">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={onBack}
                 >
-                  <Icon name="User" size={24} />
-                </button>
-                <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
-                  <Icon name="Globe2" size={24} />
-                </button>
-              </div>
-              <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
-                <Icon name="Settings" size={24} />
-              </button>
-            </div>
-
-            {/* Верхняя панель (только мобильный, поверх карты) */}
-            <div className="md:hidden absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
-              <div
-                className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
-                onClick={onBack}
-              >
-                <Icon name="ArrowLeft" size={20} />
-              </div>
-              <div
-                className="bg-white text-slate-400 p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
-                onClick={onProfile}
-              >
-                <Icon name="User" size={20} />
-              </div>
-            </div>
-
-            {/* КАРТА (ФОН) - Унифицированный стиль */}
-            <div className="absolute inset-0 h-full md:relative md:h-full md:order-2 md:w-[450px] lg:w-[500px] border-l border-slate-100 map-bg group z-0">
-              <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[12vh] md:pt-0 pointer-events-none px-4">
-                <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
-                  <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
-                    <Icon name="Map" size={28} />
+                  <div className="bg-brand-500 text-white p-1.5 rounded-lg shrink-0">
+                    <Icon name="Map" size={20} />
                   </div>
-                  {/* Используем те же стили текста, что и на странице рекомендаций */}
-                  <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
-                    ИНТЕРАКТИВНАЯ КАРТА
-                  </h3>
-                  <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
-                    Локации из чата появятся здесь
-                  </p>
+                  <span className="font-bold text-lg text-slate-800 tracking-tight whitespace-nowrap">
+                    TravelPlanner
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={onProfile}
+                    className="p-2 text-slate-400 hover:text-brand-500 hover:bg-slate-50 rounded-xl transition-all"
+                  >
+                    <Icon name="User" size={22} />
+                  </button>
                 </div>
               </div>
-            </div>
+            </nav>
 
-            {/* ШТОРКА ЧАТА */}
-            <div
-              className="absolute bottom-0 w-full md:static md:h-full md:flex-1 md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
-              style={{
-                height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
-              }}
-            >
-              {/* Хедер шторки */}
-              <div className="w-full pt-3 pb-1 shrink-0 bg-white rounded-t-[2.5rem] md:rounded-none border-b border-slate-50">
+            {/* --- MAIN CONTENT AREA --- */}
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+              {/* Боковая панель (Desktop) */}
+              <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-6 space-y-6 shrink-0">
+                <div className="flex-1 flex flex-col space-y-4">
+                  <button
+                    className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20"
+                    onClick={onProfile}
+                  >
+                    <Icon name="User" size={24} />
+                  </button>
+                  <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
+                    <Icon name="Globe2" size={24} />
+                  </button>
+                </div>
+                <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
+                  <Icon name="Settings" size={24} />
+                </button>
+              </div>
+
+              {/* КАРТА (ФОН) */}
+              <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 map-bg group z-0">
+                <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[10vh] md:pt-0 pointer-events-none px-4">
+                  <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
+                    <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
+                      <Icon name="Map" size={28} />
+                    </div>
+                    <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
+                      ИНТЕРАКТИВНАЯ КАРТА
+                    </h3>
+                    <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
+                      Локации из чата появятся здесь
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ШТОРКА ЧАТА */}
+              <div
+                className="absolute bottom-0 w-full md:static md:h-full md:w-[420px] lg:w-[480px] md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
+                style={{
+                  height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
+                }}
+              >
                 <div
-                  className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 md:hidden cursor-grab active:cursor-grabbing touch-none"
+                  className="w-full pt-3 pb-1 shrink-0 md:hidden cursor-grab active:cursor-grabbing touch-none flex justify-center bg-white rounded-t-[2.5rem]"
                   onTouchStart={handleTouchStart}
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
-                ></div>
+                >
+                  <div className="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+                </div>
 
-                <div className="px-4 md:px-6 py-2 flex items-center justify-between">
+                <div className="px-4 md:px-6 py-2 border-b border-slate-50 flex items-center justify-between shrink-0">
                   <button
                     onClick={onBack}
                     className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors"
@@ -1332,56 +1338,54 @@
                   </button>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      AI Online
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      AI Ассистент
                     </span>
                   </div>
                 </div>
-              </div>
 
-              {/* Сообщения */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50/30 md:bg-white">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}
-                  >
+                <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 bg-slate-50/30 md:bg-white">
+                  {messages.map((msg) => (
                     <div
-                      className={`p-3 md:p-4 rounded-2xl max-w-[85%] md:max-w-[70%] shadow-sm text-sm md:text-base ${msg.type === 'user' ? 'bg-white text-slate-800 border border-slate-100 rounded-tr-none' : 'bg-brand-500 text-white rounded-tl-none'}`}
+                      key={msg.id}
+                      className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'}`}
                     >
-                      <p>{msg.text}</p>
-                    </div>
-                    {msg.options && (
-                      <div className="flex flex-wrap gap-2 mt-3 ml-2">
-                        {msg.options.map((option, index) => (
-                          <button
-                            key={index}
-                            className="bg-white text-brand-600 text-xs md:text-sm font-bold py-2 px-4 rounded-xl border border-brand-100 shadow-sm hover:bg-brand-50 transition-all active:scale-95"
-                          >
-                            {option}
-                          </button>
-                        ))}
+                      <div
+                        className={`p-3 md:p-4 rounded-2xl max-w-[85%] md:max-w-[75%] shadow-sm text-sm md:text-base ${msg.type === 'user' ? 'bg-white text-slate-800 border border-slate-100 rounded-tr-none' : 'bg-brand-500 text-white rounded-tl-none'}`}
+                      >
+                        <p>{msg.text}</p>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                      {msg.options && (
+                        <div className="flex flex-wrap gap-2 mt-3 ml-2">
+                          {msg.options.map((option, index) => (
+                            <button
+                              key={index}
+                              className="bg-white text-brand-600 text-xs md:text-sm font-bold py-2 px-4 rounded-xl border border-brand-100 shadow-sm hover:bg-brand-50 transition-all active:scale-95"
+                            >
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
 
-              {/* Поле ввода */}
-              <div className="p-4 md:p-6 bg-white border-t border-slate-100 shrink-0">
-                <div className="max-w-3xl mx-auto relative flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Напишите сообщение..."
-                    className="w-full pl-5 pr-24 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base transition-all"
-                  />
-                  <div className="absolute right-2 flex space-x-1">
-                    <button className="p-2.5 text-slate-400 hover:text-brand-600 rounded-xl transition-colors">
-                      <Icon name="Mic" size={20} />
-                    </button>
-                    <button className="p-2.5 bg-brand-500 text-white rounded-xl hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 active:scale-90">
-                      <Icon name="Send" size={20} />
-                    </button>
+                <div className="p-4 md:p-6 bg-white border-t border-slate-100 shrink-0">
+                  <div className="max-w-3xl mx-auto relative flex items-center">
+                    <input
+                      type="text"
+                      placeholder="Напишите сообщение..."
+                      className="w-full pl-5 pr-24 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base transition-all"
+                    />
+                    <div className="absolute right-2 flex space-x-1">
+                      <button className="p-2.5 text-slate-400 hover:text-brand-600 rounded-xl transition-colors">
+                        <Icon name="Mic" size={20} />
+                      </button>
+                      <button className="p-2.5 bg-brand-500 text-white rounded-xl hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 active:scale-90">
+                        <Icon name="Send" size={20} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1419,137 +1423,163 @@
         const handleTouchEnd = () => setIsDragging(false);
 
         return (
-          <div className="flex flex-col md:flex-row h-screen bg-white overflow-hidden relative">
-            {/* Боковая панель (Desktop) */}
-            <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-4 space-y-6 shrink-0 z-20 relative">
-              <div
-                className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
-                onClick={onBack}
-              >
-                <Icon name="Map" size={20} />
+          <div className="flex flex-col h-screen bg-white overflow-hidden">
+            {/* --- HEADER AREA (FIXED WIDTH) --- */}
+            <nav className="z-50 bg-white border-b border-slate-100 h-16 shrink-0">
+              <div className="max-w-4xl mx-auto px-4 md:px-6 h-full flex justify-between items-center w-full">
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={onBack}
+                >
+                  <div className="bg-brand-500 text-white p-1.5 rounded-lg shrink-0">
+                    <Icon name="Map" size={20} />
+                  </div>
+                  <span className="font-bold text-lg text-slate-800 tracking-tight whitespace-nowrap">
+                    TravelPlanner
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <button className="p-2 text-brand-500 bg-brand-50 rounded-xl transition-all">
+                    <Icon name="User" size={22} />
+                  </button>
+                </div>
               </div>
-              <div className="flex-1 flex flex-col space-y-4 mt-4">
-                <button className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20">
-                  <Icon name="User" size={24} />
+            </nav>
+
+            {/* --- MAIN CONTENT AREA --- */}
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+              {/* Боковая панель (Desktop) */}
+              <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-6 space-y-6 shrink-0 z-20 relative">
+                <div
+                  className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
+                  onClick={onBack}
+                >
+                  <Icon name="Map" size={20} />
+                </div>
+                <div className="flex-1 flex flex-col space-y-4 mt-4">
+                  <button className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20">
+                    <Icon name="User" size={24} />
+                  </button>
+                  <button
+                    className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors"
+                    onClick={onChat}
+                  >
+                    <Icon name="Globe2" size={24} />
+                  </button>
+                </div>
+                <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
+                  <Icon name="Settings" size={24} />
                 </button>
-                <button
-                  className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors"
+              </div>
+
+              {/* Мобильная навигация (Назад в чат) */}
+              <div className="md:hidden absolute top-4 left-4 z-20 flex items-center justify-between pointer-events-none">
+                <div
+                  className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
                   onClick={onChat}
                 >
-                  <Icon name="Globe2" size={24} />
-                </button>
+                  <Icon name="ArrowLeft" size={20} />
+                </div>
               </div>
-              <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
-                <Icon name="Settings" size={24} />
-              </button>
-            </div>
 
-            {/* Мобильная навигация (Назад в чат) */}
-            <div className="md:hidden absolute top-4 left-4 z-20 flex items-center justify-between pointer-events-none">
-              <div
-                className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
-                onClick={onChat}
-              >
-                <Icon name="ArrowLeft" size={20} />
-              </div>
-            </div>
-
-            {/* КАРТА (ФОН) — Унифицированный стиль */}
-            <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 map-bg z-0 overflow-hidden group">
-              <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[12vh] md:pt-0 pointer-events-none px-4">
-                <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
-                  <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
-                    <Icon name="Map" size={28} />
+              {/* КАРТА (ФОН) */}
+              <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 map-bg z-0 overflow-hidden group">
+                <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[10vh] md:pt-0 pointer-events-none px-4">
+                  <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
+                    <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
+                      <Icon name="Map" size={28} />
+                    </div>
+                    <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
+                      КАРТА ПРОФИЛЯ
+                    </h3>
+                    <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
+                      История ваших перемещений и сохраненные локации
+                    </p>
                   </div>
-                  <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
-                    КАРТА ПРОФИЛЯ
-                  </h3>
-                  <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
-                    История ваших перемещений и сохраненные локации
-                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* ШТОРКА ПРОФИЛЯ */}
-            <div
-              className="absolute bottom-0 w-full md:static md:h-full md:w-[500px] md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
-              style={{
-                height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
-              }}
-            >
-              {/* Зона перетаскивания (только моб) */}
+              {/* ШТОРКА ПРОФИЛЯ */}
               <div
-                className="w-full pt-3 pb-1 md:hidden cursor-grab active:cursor-grabbing touch-none flex justify-center shrink-0 bg-white rounded-t-[2.5rem]"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                className="absolute bottom-0 w-full md:static md:h-full md:w-[500px] md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
+                style={{
+                  height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
+                }}
               >
-                <div className="w-12 h-1.5 bg-slate-200 rounded-full"></div>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
-                <div className="flex items-center justify-between mb-8">
-                  <h1 className="text-2xl font-extrabold text-slate-900 hidden md:block">
-                    Профиль
-                  </h1>
-                  <button
-                    onClick={onBack}
-                    className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors md:hidden"
-                  >
-                    <Icon name="ArrowLeft" size={16} /> Выход
-                  </button>
+                {/* Зона перетаскивания (только моб) */}
+                <div
+                  className="w-full pt-3 pb-1 md:hidden cursor-grab active:cursor-grabbing touch-none flex justify-center shrink-0 bg-white rounded-t-[2.5rem]"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <div className="w-12 h-1.5 bg-slate-200 rounded-full"></div>
                 </div>
 
-                {/* Инфо пользователя */}
-                <div className="flex flex-col items-center md:items-start mb-10">
-                  <div className="w-24 h-24 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
-                    <Icon name="User" size={40} className="text-slate-300" />
-                  </div>
-                  <h2 className="text-xl font-bold text-slate-800">
-                    Иван Иванов
-                  </h2>
-                  <p className="text-sm text-slate-400 font-medium">
-                    Путешественник с 2026 года
-                  </p>
-                </div>
-
-                {/* Табы */}
-                <div className="flex p-1 bg-slate-50 rounded-2xl mb-6">
-                  <button
-                    onClick={() => setActiveTab('routes')}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'routes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
-                  >
-                    Маршруты
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('saved')}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'saved' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
-                  >
-                    Сохраненное
-                  </button>
-                </div>
-
-                {/* Карточка контента */}
-                <div className="flex-1 min-h-[250px] bg-slate-50 rounded-[2rem] border border-slate-100 relative group overflow-hidden">
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500">
-                      <Icon name="ArrowLeft" size={14} />
-                    </button>
-                    <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500 transform rotate-180">
-                      <Icon name="ArrowLeft" size={14} />
+                <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
+                  <div className="flex items-center justify-between mb-8">
+                    <h1 className="text-2xl font-extrabold text-slate-900 hidden md:block">
+                      Профиль
+                    </h1>
+                    <button
+                      onClick={onBack}
+                      className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors md:hidden"
+                    >
+                      <Icon name="ArrowLeft" size={16} /> Выход
                     </button>
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-medium italic">
-                    {activeTab === 'routes'
-                      ? 'Нет активных маршрутов'
-                      : 'Список пуст'}
-                  </div>
-                </div>
 
-                <button className="mt-8 w-full py-4 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 hover:bg-brand-600 transition-all active:scale-95">
-                  НОВОЕ ПУТЕШЕСТВИЕ
-                </button>
+                  {/* Инфо пользователя */}
+                  <div className="flex flex-col items-center md:items-start mb-10">
+                    <div className="w-24 h-24 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
+                      <Icon name="User" size={40} className="text-slate-300" />
+                    </div>
+                    <h2 className="text-xl font-bold text-slate-800">
+                      Иван Иванов
+                    </h2>
+                    <p className="text-sm text-slate-400 font-medium">
+                      Путешественник с 2026 года
+                    </p>
+                  </div>
+
+                  {/* Табы */}
+                  <div className="flex p-1 bg-slate-50 rounded-2xl mb-6">
+                    <button
+                      onClick={() => setActiveTab('routes')}
+                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'routes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      Маршруты
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('saved')}
+                      className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'saved' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      Сохраненное
+                    </button>
+                  </div>
+
+                  {/* Карточка контента */}
+                  <div className="flex-1 min-h-[250px] bg-slate-50 rounded-[2rem] border border-slate-100 relative group overflow-hidden">
+                    <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500">
+                        <Icon name="ArrowLeft" size={14} />
+                      </button>
+                      <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500 transform rotate-180">
+                        <Icon name="ArrowLeft" size={14} />
+                      </button>
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-medium italic">
+                      {activeTab === 'routes'
+                        ? 'Нет активных маршрутов'
+                        : 'Список пуст'}
+                    </div>
+                  </div>
+
+                  <button className="mt-8 w-full py-4 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 hover:bg-brand-600 transition-all active:scale-95">
+                    НОВОЕ ПУТЕШЕСТВИЕ
+                  </button>
+                </div>
               </div>
             </div>
           </div>
