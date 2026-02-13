@@ -527,8 +527,8 @@
 
         return (
           <div className="flex flex-col min-h-screen bg-white">
-            {/* Header (Sticky) - Скрываем на AI Assistant */}
-            {view !== 'ai-assistant' && (
+            {/* Скрываем стандартный хедер на страницах с боковой панелью */}
+            {view !== 'ai-assistant' && view !== 'profile' && (
               <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-100 h-16 shrink-0">
                 <div className="max-w-4xl mx-auto px-4 md:px-6 h-full flex justify-between items-center w-full">
                   <div
@@ -549,7 +549,6 @@
               </nav>
             )}
 
-            {/* Main Content */}
             <main className="flex-1 w-full flex flex-col overflow-hidden relative">
               {view === 'landing' && (
                 <div className="overflow-y-auto h-full">
@@ -569,17 +568,20 @@
                 <RecommendationsPage onBack={() => setView('landing')} />
               )}
               {view === 'ai-assistant' && (
-                <AIAssistantPage onBack={() => setView('landing')} />
+                <AIAssistantPage
+                  onBack={() => setView('landing')}
+                  onProfile={() => setView('profile')}
+                />
+              )}
+              {view === 'profile' && (
+                <ProfilePage
+                  onBack={() => setView('landing')}
+                  onChat={() => setView('ai-assistant')}
+                />
               )}
             </main>
 
-            {/* Footer */}
-            {/* Логика:
-                        1. Скрыт на AI Assistant.
-                        2. На Landing: виден всегда.
-                        3. На Planner/Recs: СКРЫТ на мобильном (hidden), ВИДЕН на десктопе (md:block).
-                    */}
-            {view !== 'ai-assistant' && (
+            {view !== 'ai-assistant' && view !== 'profile' && (
               <footer
                 className={`mt-auto border-t border-slate-100 bg-white py-8 shrink-0 relative z-20 ${view === 'landing' ? '' : 'hidden md:block'}`}
               >
@@ -620,13 +622,25 @@
       }
 
       function LandingPage({ scenario, setScenario, onStart }) {
+        // Состояния для кастомного селектора количества человек
+        const [isSelectOpen, setIsSelectOpen] = useState(false);
+        const [selectedPeople, setSelectedPeople] = useState('1 человек');
+
+        const peopleOptions = [
+          '1 человек',
+          '2 человека',
+          '3 человека',
+          '4 человека',
+          'Группа 5+',
+        ];
+
         return (
           <div className="relative flex flex-col min-h-full">
-            {/* Fixed Gradient: Removed negative z-index, put it first in DOM */}
-            <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-blue-100 via-blue-50/30 to-transparent pointer-events-none"></div>
+            {/* Фоновый градиент */}
+            <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-blue-100 via-blue-50/30 to-transparent pointer-events-none z-0"></div>
 
             <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-6 pt-6 md:pt-32 pb-10 md:pb-20 w-full">
-              {/* SVG Area */}
+              {/* SVG Иллюстрация */}
               <div className="flex justify-center mb-6 md:mb-12 h-auto max-w-full overflow-visible px-4">
                 <div className="w-full max-w-[500px]">
                   <svg
@@ -692,7 +706,7 @@
               </div>
 
               <div className="flex flex-col">
-                {/* Slogan */}
+                {/* Заголовок и Слоган */}
                 <div className="text-center mb-6 md:mb-0 order-1">
                   <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight">
                     Спланируй <span className="text-brand-500">идеальное</span>{' '}
@@ -705,14 +719,19 @@
                   </p>
                 </div>
 
-                {/* Search Form */}
+                {/* Основная форма поиска */}
                 <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 p-2 mb-6 md:mb-20 order-2">
+                  {/* Переключатель сценариев */}
                   <div className="flex p-1 bg-slate-50 rounded-xl md:rounded-2xl mb-4 md:mb-6 mx-1 md:mx-4 mt-1 md:mt-4 overflow-x-auto no-scrollbar">
                     {['manual', 'random', 'ai'].map((s) => (
                       <button
                         key={s}
                         onClick={() => setScenario(s)}
-                        className={`flex-1 py-2 px-3 md:px-0 whitespace-nowrap rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all ${scenario === s ? 'bg-brand-500 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`flex-1 py-2 px-3 md:px-0 whitespace-nowrap rounded-lg md:rounded-xl text-xs md:text-sm font-bold transition-all ${
+                          scenario === s
+                            ? 'bg-brand-500 text-white shadow-md'
+                            : 'text-slate-400 hover:text-slate-600'
+                        }`}
                       >
                         {s === 'manual'
                           ? 'Вручную'
@@ -723,7 +742,9 @@
                     ))}
                   </div>
 
+                  {/* Поля ввода */}
                   <div className="flex flex-col md:flex-row gap-2 md:gap-4 px-2 md:px-4 pb-4 md:pb-6 items-center">
+                    {/* Откуда */}
                     <div className="w-full md:flex-1 relative group">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors">
                         <Icon name="MapPin" size={18} />
@@ -734,6 +755,8 @@
                         className="w-full pl-11 pr-4 py-3.5 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base"
                       />
                     </div>
+
+                    {/* Даты */}
                     <div className="w-full md:flex-1 relative group">
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors">
                         <Icon name="Calendar" size={18} />
@@ -744,33 +767,89 @@
                         className="w-full pl-11 pr-4 py-3.5 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base"
                       />
                     </div>
-                    <div className="w-full md:w-44 relative group">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 z-10 pointer-events-none transition-colors">
-                        <Icon name="Users" size={18} />
-                      </div>
-                      <select
-                        defaultValue="1 человек"
-                        className="w-full pl-11 pr-10 py-3.5 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base appearance-none cursor-pointer"
+
+                    {/* Кастомный селектор количества человек */}
+                    <div className="w-full md:w-52 relative group">
+                      <div
+                        onClick={() => setIsSelectOpen(!isSelectOpen)}
+                        className={`w-full pl-11 pr-10 py-3.5 bg-slate-50 rounded-xl md:rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                          isSelectOpen
+                            ? 'border-brand-200 bg-white ring-4 ring-brand-50'
+                            : 'border-transparent hover:bg-slate-100'
+                        }`}
                       >
-                        <option>1 человек</option>
-                        <option>2 человека</option>
-                        <option>3 человека</option>
-                        <option>4 человека</option>
-                        <option>Группа 5+</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                        <svg
-                          width="10"
-                          height="10"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-brand-500 transition-colors">
+                          <Icon name="Users" size={18} />
+                        </div>
+                        <span className="text-slate-800 font-medium text-sm md:text-base select-none">
+                          {selectedPeople}
+                        </span>
+                        <div
+                          className={`transition-transform duration-200 ${
+                            isSelectOpen
+                              ? 'rotate-180 text-brand-500'
+                              : 'text-slate-400'
+                          }`}
                         >
-                          <path d="m6 9 6 6 6-6" />
-                        </svg>
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m6 9 6 6 6-6" />
+                          </svg>
+                        </div>
                       </div>
+
+                      {/* Выпадающее меню */}
+                      {isSelectOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setIsSelectOpen(false)}
+                          ></div>
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                            {peopleOptions.map((option) => (
+                              <div
+                                key={option}
+                                onClick={() => {
+                                  setSelectedPeople(option);
+                                  setIsSelectOpen(false);
+                                }}
+                                className={`px-4 py-3 text-sm font-medium transition-colors cursor-pointer flex items-center justify-between ${
+                                  selectedPeople === option
+                                    ? 'bg-brand-50 text-brand-600'
+                                    : 'text-slate-600 hover:bg-slate-50 hover:text-brand-500'
+                                }`}
+                              >
+                                {option}
+                                {selectedPeople === option && (
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M20 6 9 17l-5-5" />
+                                  </svg>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
+
+                    {/* Кнопка запуска */}
                     <button
                       onClick={onStart}
                       className="w-full md:w-auto md:min-w-[140px] md:shrink-0 px-8 h-12 md:h-14 bg-brand-500 hover:bg-brand-600 text-white rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-brand-500/30 transition-all active:scale-95 text-sm md:text-base font-bold uppercase tracking-wide"
@@ -780,7 +859,7 @@
                   </div>
                 </div>
 
-                {/* Mobile description */}
+                {/* Описание для мобильных устройств */}
                 <div className="md:hidden text-center mb-10 order-3 px-4">
                   <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
                     Введи бюджет, выбери стиль планирования — и получи готовый
@@ -789,7 +868,7 @@
                 </div>
               </div>
 
-              {/* Process Section */}
+              {/* Секция процесса (Как это работает) */}
               <div className="mb-16 md:mb-24">
                 <div className="text-center mb-8 md:mb-12 px-4">
                   <h3 className="text-xs md:text-sm font-bold text-brand-500 uppercase tracking-widest mb-2">
@@ -829,12 +908,14 @@
                 </div>
               </div>
 
-              {/* FAQ Section */}
+              {/* Секция FAQ */}
               <div className="grid grid-cols-1 gap-6 md:gap-12">
                 {FAQ_CARDS.map((card, idx) => (
                   <div
                     key={card.id}
-                    className={`flex flex-col md:flex-row bg-white rounded-2xl md:rounded-[2rem] overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
+                    className={`flex flex-col md:flex-row bg-white rounded-2xl md:rounded-[2rem] overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 ${
+                      idx % 2 !== 0 ? 'md:flex-row-reverse' : ''
+                    }`}
                   >
                     <div className="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative overflow-hidden">
                       <img
@@ -1123,7 +1204,7 @@
       }
 
       // --- AI ASSISTANT PAGE ---
-      function AIAssistantPage({ onBack }) {
+      function AIAssistantPage({ onBack, onProfile }) {
         const [messages, setMessages] = useState([
           {
             id: 1,
@@ -1171,13 +1252,16 @@
             {/* Боковая панель (только десктоп) */}
             <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-4 space-y-6 shrink-0 z-20 relative">
               <div
-                className="bg-brand-500 text-white p-1.5 rounded-lg cursor-pointer"
+                className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
                 onClick={onBack}
               >
                 <Icon name="Map" size={20} />
               </div>
               <div className="flex-1 flex flex-col space-y-4 mt-4">
-                <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
+                <button
+                  className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20"
+                  onClick={onProfile}
+                >
                   <Icon name="User" size={24} />
                 </button>
                 <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
@@ -1189,34 +1273,36 @@
               </button>
             </div>
 
-            {/* Плавающая кнопка Назад (только мобильный, поверх карты) */}
-            <div className="md:hidden absolute top-4 left-4 z-0 pointer-events-none">
+            {/* Верхняя панель (только мобильный, поверх карты) */}
+            <div className="md:hidden absolute top-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
               <div
                 className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
                 onClick={onBack}
               >
                 <Icon name="ArrowLeft" size={20} />
               </div>
+              <div
+                className="bg-white text-slate-400 p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
+                onClick={onProfile}
+              >
+                <Icon name="User" size={20} />
+              </div>
             </div>
 
-            {/* КАРТА (ФОН) */}
-            <div className="absolute inset-0 h-full md:relative md:order-2 md:w-[450px] lg:w-[500px] border-l border-slate-100 bg-slate-50 relative overflow-hidden z-0">
-              <div className="w-full h-full md:p-6">
-                <div className="w-full h-full md:rounded-[3rem] overflow-hidden md:border border-slate-200 shadow-inner map-bg relative group">
-                  {/* Контент карты смещен вверх pt-[12vh] для мобилок */}
-                  <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[12vh] md:pt-0 pointer-events-none px-4">
-                    <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
-                      <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
-                        <Icon name="Map" size={28} />
-                      </div>
-                      <h3 className="text-xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
-                        ИНТЕРАКТИВНАЯ КАРТА
-                      </h3>
-                      <p className="text-sm text-slate-400 mt-2 font-medium max-w-[250px] mx-auto text-center leading-relaxed">
-                        Локации из чата появятся здесь
-                      </p>
-                    </div>
+            {/* КАРТА (ФОН) - Унифицированный стиль */}
+            <div className="absolute inset-0 h-full md:relative md:h-full md:order-2 md:w-[450px] lg:w-[500px] border-l border-slate-100 map-bg group z-0">
+              <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[12vh] md:pt-0 pointer-events-none px-4">
+                <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
+                  <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
+                    <Icon name="Map" size={28} />
                   </div>
+                  {/* Используем те же стили текста, что и на странице рекомендаций */}
+                  <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
+                    ИНТЕРАКТИВНАЯ КАРТА
+                  </h3>
+                  <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
+                    Локации из чата появятся здесь
+                  </p>
                 </div>
               </div>
             </div>
@@ -1228,9 +1314,8 @@
                 height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
               }}
             >
-              {/* Хедер шторки с кнопкой Назад */}
+              {/* Хедер шторки */}
               <div className="w-full pt-3 pb-1 shrink-0 bg-white rounded-t-[2.5rem] md:rounded-none border-b border-slate-50">
-                {/* Ручка для перетаскивания (только моб) */}
                 <div
                   className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 md:hidden cursor-grab active:cursor-grabbing touch-none"
                   onTouchStart={handleTouchStart}
@@ -1299,6 +1384,172 @@
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // --- PROFILE PAGE ---
+      function ProfilePage({ onBack, onChat }) {
+        const [activeTab, setActiveTab] = useState('routes');
+        const [sheetHeight, setSheetHeight] = useState(60);
+        const [isDragging, setIsDragging] = useState(false);
+        const startY = useRef(0);
+        const startHeight = useRef(0);
+
+        const handleTouchStart = (e) => {
+          setIsDragging(true);
+          startY.current = e.touches[0].clientY;
+          startHeight.current = sheetHeight;
+        };
+
+        const handleTouchMove = (e) => {
+          if (!isDragging) return;
+          const currentY = e.touches[0].clientY;
+          const deltaY = startY.current - currentY;
+          const windowHeight = window.innerHeight;
+          const deltaPercent = (deltaY / windowHeight) * 100;
+          let newHeight = startHeight.current + deltaPercent;
+          if (newHeight < 20) newHeight = 20;
+          if (newHeight > 90) newHeight = 90;
+          setSheetHeight(newHeight);
+        };
+
+        const handleTouchEnd = () => setIsDragging(false);
+
+        return (
+          <div className="flex flex-col md:flex-row h-screen bg-white overflow-hidden relative">
+            {/* Боковая панель (Desktop) */}
+            <div className="hidden md:flex flex-col w-16 bg-white border-r border-slate-100 items-center py-4 space-y-6 shrink-0 z-20 relative">
+              <div
+                className="bg-slate-50 text-slate-400 p-1.5 rounded-lg cursor-pointer hover:text-brand-500 transition-colors"
+                onClick={onBack}
+              >
+                <Icon name="Map" size={20} />
+              </div>
+              <div className="flex-1 flex flex-col space-y-4 mt-4">
+                <button className="p-2 bg-brand-500 text-white rounded-lg shadow-lg shadow-brand-500/20">
+                  <Icon name="User" size={24} />
+                </button>
+                <button
+                  className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors"
+                  onClick={onChat}
+                >
+                  <Icon name="Globe2" size={24} />
+                </button>
+              </div>
+              <button className="p-2 text-slate-400 hover:text-brand-600 hover:bg-slate-50 rounded-lg transition-colors">
+                <Icon name="Settings" size={24} />
+              </button>
+            </div>
+
+            {/* Мобильная навигация (Назад в чат) */}
+            <div className="md:hidden absolute top-4 left-4 z-20 flex items-center justify-between pointer-events-none">
+              <div
+                className="bg-brand-500 text-white p-2 rounded-xl cursor-pointer pointer-events-auto shadow-lg active:scale-95 transition-transform"
+                onClick={onChat}
+              >
+                <Icon name="ArrowLeft" size={20} />
+              </div>
+            </div>
+
+            {/* КАРТА (ФОН) — Унифицированный стиль */}
+            <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 map-bg z-0 overflow-hidden group">
+              <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[12vh] md:pt-0 pointer-events-none px-4">
+                <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
+                  <div className="w-14 h-14 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
+                    <Icon name="Map" size={28} />
+                  </div>
+                  <h3 className="text-lg md:text-2xl font-black text-slate-400 uppercase tracking-[0.2em] select-none text-center">
+                    КАРТА ПРОФИЛЯ
+                  </h3>
+                  <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
+                    История ваших перемещений и сохраненные локации
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* ШТОРКА ПРОФИЛЯ */}
+            <div
+              className="absolute bottom-0 w-full md:static md:h-full md:w-[500px] md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
+              style={{
+                height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
+              }}
+            >
+              {/* Зона перетаскивания (только моб) */}
+              <div
+                className="w-full pt-3 pb-1 md:hidden cursor-grab active:cursor-grabbing touch-none flex justify-center shrink-0 bg-white rounded-t-[2.5rem]"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className="w-12 h-1.5 bg-slate-200 rounded-full"></div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
+                <div className="flex items-center justify-between mb-8">
+                  <h1 className="text-2xl font-extrabold text-slate-900 hidden md:block">
+                    Профиль
+                  </h1>
+                  <button
+                    onClick={onBack}
+                    className="text-slate-400 hover:text-slate-600 flex items-center gap-1 text-sm font-medium transition-colors md:hidden"
+                  >
+                    <Icon name="ArrowLeft" size={16} /> Выход
+                  </button>
+                </div>
+
+                {/* Инфо пользователя */}
+                <div className="flex flex-col items-center md:items-start mb-10">
+                  <div className="w-24 h-24 md:w-20 md:h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 border-4 border-white shadow-sm">
+                    <Icon name="User" size={40} className="text-slate-300" />
+                  </div>
+                  <h2 className="text-xl font-bold text-slate-800">
+                    Иван Иванов
+                  </h2>
+                  <p className="text-sm text-slate-400 font-medium">
+                    Путешественник с 2026 года
+                  </p>
+                </div>
+
+                {/* Табы */}
+                <div className="flex p-1 bg-slate-50 rounded-2xl mb-6">
+                  <button
+                    onClick={() => setActiveTab('routes')}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'routes' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                  >
+                    Маршруты
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('saved')}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'saved' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400'}`}
+                  >
+                    Сохраненное
+                  </button>
+                </div>
+
+                {/* Карточка контента */}
+                <div className="flex-1 min-h-[250px] bg-slate-50 rounded-[2rem] border border-slate-100 relative group overflow-hidden">
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500">
+                      <Icon name="ArrowLeft" size={14} />
+                    </button>
+                    <button className="w-8 h-8 bg-white/80 backdrop-blur rounded-lg flex items-center justify-center shadow-sm text-slate-400 hover:text-brand-500 transform rotate-180">
+                      <Icon name="ArrowLeft" size={14} />
+                    </button>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm font-medium italic">
+                    {activeTab === 'routes'
+                      ? 'Нет активных маршрутов'
+                      : 'Список пуст'}
+                  </div>
+                </div>
+
+                <button className="mt-8 w-full py-4 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-500/20 hover:bg-brand-600 transition-all active:scale-95">
+                  НОВОЕ ПУТЕШЕСТВИЕ
+                </button>
               </div>
             </div>
           </div>
