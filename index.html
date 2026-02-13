@@ -96,8 +96,8 @@
       }
     </style>
   </head>
-  <body class="bg-white text-slate-900 antialiased min-h-screen">
-    <div id="root"></div>
+  <body class="bg-white text-slate-900 antialiased min-h-screen flex flex-col">
+    <div id="root" class="flex flex-col min-h-screen"></div>
 
     <script type="text/babel">
       const { useState } = React;
@@ -390,7 +390,6 @@
 
         return (
           <div className="flex flex-col min-h-screen">
-            {/* Consistent Navbar Container */}
             <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-100">
               <div className="max-w-4xl mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
                 <div
@@ -432,7 +431,7 @@
           <div className="relative">
             <div className="absolute top-0 left-0 w-full h-[800px] -z-10 bg-gradient-to-b from-blue-100 via-blue-50/30 to-transparent pointer-events-none"></div>
 
-            <div className="max-w-4xl mx-auto px-4 md:px-6 pt-6 md:pt-24 pb-20">
+            <div className="max-w-4xl mx-auto px-4 md:px-6 pt-6 md:pt-32 pb-10 md:pb-20">
               {/* SVG Area */}
               <div className="flex justify-center mb-6 md:mb-12 h-auto max-w-full overflow-visible">
                 <div className="w-full max-w-[500px]">
@@ -501,7 +500,7 @@
               <div className="flex flex-col">
                 {/* Slogan */}
                 <div className="text-center mb-6 md:mb-0 order-1">
-                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-slate-900 mb-3 md:mb-6 leading-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 md:mb-6 leading-tight">
                     Спланируй <span className="text-brand-500">идеальное</span>{' '}
                     путешествие <br className="hidden md:block" />
                     за минуты
@@ -513,7 +512,7 @@
                 </div>
 
                 {/* Search Form */}
-                <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 p-2 mb-6 md:mb-20 w-full order-2">
+                <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 p-2 mb-6 md:mb-20 order-2">
                   <div className="flex p-1 bg-slate-50 rounded-xl md:rounded-2xl mb-4 md:mb-6 mx-1 md:mx-4 mt-1 md:mt-4 overflow-x-auto no-scrollbar">
                     {['manual', 'random', 'ai'].map((s) => (
                       <button
@@ -552,7 +551,7 @@
                       />
                     </div>
                     <div className="w-full md:w-44 relative group">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 z-10 pointer-events-none">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 z-10 pointer-events-none transition-colors">
                         <Icon name="Users" size={18} />
                       </div>
                       <select
@@ -587,8 +586,7 @@
                   </div>
                 </div>
 
-                {/* Mobile description */}
-                <div className="md:hidden text-center mb-12 order-3 px-4">
+                <div className="md:hidden text-center mb-10 order-3 px-4">
                   <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
                     Введи бюджет, выбери стиль планирования — и получи готовый
                     маршрут с перелётами, отелями и активностями.
@@ -596,8 +594,8 @@
                 </div>
               </div>
 
-              {/* Steps Section */}
-              <div className="mb-20">
+              {/* Process Section */}
+              <div className="mb-16 md:mb-24">
                 <div className="text-center mb-8 md:mb-12">
                   <h3 className="text-xs md:text-sm font-bold text-brand-500 uppercase tracking-widest mb-2">
                     Процесс
@@ -628,7 +626,7 @@
                       <h4 className="font-bold text-slate-900 text-base md:text-lg mb-2">
                         {step.title}
                       </h4>
-                      <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
+                      <p className="text-slate-500 text-[13px] md:text-sm leading-relaxed">
                         {step.desc}
                       </p>
                     </div>
@@ -666,7 +664,6 @@
         );
       }
 
-      // --- PLANNER PAGE ---
       function PlannerPage({ onBack }) {
         const categories = [
           { id: 'city', label: 'Город', icon: 'MapPin' },
@@ -678,7 +675,7 @@
 
         return (
           <div className="bg-white">
-            {/* Strictly matching header/footer container */}
+            {/* Consistent Width Container */}
             <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-10">
               {/* Header Area */}
               <button
@@ -695,42 +692,41 @@
                 <Icon name="Calendar" size={16} /> 15 Окт — 20 Окт (5 дней)
               </p>
 
-              {/* Categories Chips: Grid on Desktop, Scroll on Mobile */}
+              {/* Categories Chips: Fully aligned and non-scrolling on desktop */}
               <div className="mb-10 overflow-x-auto md:overflow-x-visible no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
                 <div className="flex md:grid md:grid-cols-5 gap-3 md:gap-4 min-w-max md:min-w-0 pb-2">
                   {categories.map((cat) => (
                     <div
                       key={cat.id}
-                      className="flex-1 flex items-center justify-between gap-2 p-3 px-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-brand-500 transition-all cursor-pointer group"
+                      className="flex-1 flex items-center justify-between gap-2 p-3 px-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-brand-500 transition-all cursor-pointer group shrink-0"
                     >
                       <div className="flex items-center gap-2 overflow-hidden">
                         <div className="p-1.5 md:p-2 bg-slate-50 group-hover:bg-brand-50 rounded-xl text-slate-500 group-hover:text-brand-500 transition-colors shrink-0">
                           <Icon name={cat.icon} size={18} />
                         </div>
-                        <span className="font-bold text-[13px] text-slate-700 truncate">
+                        <span className="font-bold text-[13px] text-slate-700 truncate shrink-0">
                           {cat.label}
                         </span>
                       </div>
-                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90">
-                        <Icon name="Plus" size={12} />
+                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
+                        <Icon name="Plus" size={12} className="shrink-0" />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Search and Balanced Create Button */}
+              {/* Uniform Search Block */}
               <div className="mb-10">
                 <div className="flex flex-col md:flex-row gap-3 items-center">
                   <div className="w-full md:flex-1 relative group">
                     <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors">
                       <Icon name="Search" size={18} />
                     </div>
-                    {/* Uniform style with main page */}
                     <input
                       type="text"
                       placeholder="Поиск города или места..."
-                      className="w-full pl-11 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base transition-shadow"
+                      className="w-full pl-11 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-brand-200 outline-none text-slate-800 font-medium text-sm md:text-base"
                     />
                   </div>
                   <button className="w-full md:w-auto md:min-w-[150px] md:shrink-0 h-14 px-8 bg-brand-500 hover:bg-brand-600 text-white rounded-xl md:rounded-2xl font-bold uppercase tracking-wide shadow-lg shadow-brand-500/30 active:scale-95 transition-all text-sm md:text-base">
@@ -739,8 +735,8 @@
                 </div>
               </div>
 
-              {/* Schematic Map View (No White card wrapper, clean schematic look) */}
-              <div className="w-full mb-16">
+              {/* Schematic Map View (Reduced Bottom Margin) */}
+              <div className="w-full mb-6 md:mb-10">
                 <div className="w-full aspect-[16/11] md:aspect-[21/9] rounded-[2.5rem] overflow-hidden relative border border-slate-200 shadow-inner map-bg group">
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
                     <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
@@ -755,7 +751,6 @@
                       </p>
                     </div>
                   </div>
-                  {/* Floating zoom controls */}
                   <div className="absolute bottom-6 right-6 flex flex-col gap-2">
                     <button className="w-10 h-10 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:text-brand-500 transition-all active:scale-90">
                       <Icon name="Plus" size={18} />
@@ -773,10 +768,10 @@
 
       function Footer() {
         return (
-          <footer className="border-t border-slate-100 bg-white/50 backdrop-blur-sm mt-auto py-8">
+          <footer className="border-t border-slate-100 bg-white mt-auto py-8">
             <div className="max-w-4xl mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
               <div className="flex flex-col items-center md:items-start gap-0.5">
-                <span className="font-bold text-lg md:text-xl text-slate-900 tracking-tight leading-tight">
+                <span className="font-bold text-lg text-slate-900 tracking-tight leading-tight">
                   TravelPlanner
                 </span>
                 <span className="text-[10px] md:text-xs text-slate-400 font-medium">
