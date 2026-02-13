@@ -478,7 +478,7 @@
           title: 'Сервис бесплатный?',
           desc: 'Базовое планирование полностью бесплатно. У нас есть PRO-подписка для сложных мульти-маршрутов и сохранения истории поездок в облаке.',
           image:
-            'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=2071&auto=format&fit=crop',
+            'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?q=80&w=2071&auto=crop&auto=format&fit=crop',
           align: 'right',
         },
       ];
@@ -719,7 +719,7 @@
                   </div>
                 </div>
 
-                {/* 4. How It Works Section */}
+                {/* 4. How It Works Section - Mobile cards with shadows */}
                 <div className="mb-16 md:mb-24">
                   <div className="text-center mb-8 md:mb-12">
                     <h3 className="text-xs md:text-sm font-bold text-brand-500 uppercase tracking-widest mb-2">
@@ -728,21 +728,22 @@
                     <h2 className="text-2xl md:text-4xl font-bold text-slate-900">
                       Как это работает
                     </h2>
-                    <p className="text-slate-500 mt-3 text-sm md:text-lg">
+                    <p className="text-slate-500 mt-3 text-sm md:text-lg px-4">
                       Четыре простых шага от идеи до готового плана.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-8 relative">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 relative px-4 md:px-0">
+                    {/* Connector Line (visible only on desktop) */}
                     <div className="hidden md:block absolute top-12 left-[12%] right-[12%] h-0.5 bg-slate-100 -z-10"></div>
 
                     {STEPS.map((step) => (
                       <div
                         key={step.id}
-                        className="flex flex-col items-center text-center px-4"
+                        className="flex flex-col items-center text-center p-6 md:p-0 bg-white md:bg-transparent rounded-2xl md:rounded-none border border-slate-100 md:border-none shadow-lg shadow-slate-200/50 md:shadow-none"
                       >
-                        <div className="w-20 h-20 md:w-24 md:h-24 bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 md:mb-6 relative z-10">
-                          <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-7 h-7 md:w-8 md:h-8 bg-brand-500 rounded-full text-white flex items-center justify-center font-bold text-xs md:text-sm border-2 md:border-4 border-white shadow-sm">
+                        <div className="w-16 h-16 md:w-24 md:h-24 bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 flex items-center justify-center mb-4 md:mb-6 relative z-10">
+                          <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-6 h-6 md:w-8 md:h-8 bg-brand-500 rounded-full text-white flex items-center justify-center font-bold text-xs md:text-sm border-2 md:border-4 border-white shadow-sm">
                             {step.id}
                           </div>
                           <div className="text-brand-600">
@@ -765,7 +766,7 @@
                 </div>
 
                 {/* 5. FAQ Cards Section */}
-                <div className="mt-16 md:mt-20 pb-16">
+                <div className="mt-16 md:mt-20 pb-16 px-4 md:px-0">
                   <div className="grid grid-cols-1 gap-8 md:gap-12">
                     {FAQ_CARDS.map((card, idx) => (
                       <div
@@ -992,7 +993,10 @@
                 <a href="#" className="hover:text-brand-600 transition-colors">
                   О сервисе
                 </a>
-                <a href="#" className="hover:text-brand-600 transition-colors">
+                <a
+                  href="#"
+                  className="hover:text-brand-600 transition-colors whitespace-nowrap"
+                >
                   Контакты
                 </a>
               </div>
