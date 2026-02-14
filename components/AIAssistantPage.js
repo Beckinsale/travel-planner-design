@@ -226,16 +226,35 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
 
           <div className={`flex-1 bg-slate-50/50 overflow-y-auto custom-scrollbar transition-all ${activeTab === 'routes' ? 'block' : 'hidden'}`}>
             <div className="p-4 md:p-10 w-full max-w-5xl mx-auto">
-              <div className="mb-10 bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 w-full">
+              <div className="mb-8 bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 w-full">
                 <h3 className="text-xl md:text-2xl font-black text-brand-indigo mb-6 flex items-center gap-2">Популярные маршруты</h3>
-                <div className="relative group">
+                <div className="relative group mb-6">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors"><Icon name="MapPin" size={20} /></div>
                   <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all" />
+                </div>
+
+                <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
+                  {['Все', ...new Set(ALL_TOURS.flatMap(t => t.tags).filter(tag => tag.includes('⚡') || tag.includes('🌴') || tag.includes('🎈')).map(tag => tag.split(' ')[1]))].map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setSelectedFilter(f)}
+                      className={`px-5 py-2.5 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex items-center gap-2 ${
+                        selectedFilter === f 
+                          ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/20' 
+                          : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo'
+                      }`}
+                    >
+                      {f === 'Активный' && <span className="text-sm">⚡</span>}
+                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
+                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                      {f}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
-                {ALL_TOURS.map((res, i) => (
+                {ALL_TOURS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res, i) => (
                   <div key={i} onClick={() => handleSend(res.title)} className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
                     <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
                       <Icon name="Map" size={14} className="md:size-4 text-white" />

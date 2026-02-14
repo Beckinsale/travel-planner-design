@@ -1,5 +1,6 @@
 function LandingPage({ scenario, setScenario, onStart }) {
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedFilter, setSelectedFilter] = React.useState('Все');
 
   const handleSearch = (query, target) => {
     // target может быть 'chat' или 'routes'
@@ -170,14 +171,32 @@ function LandingPage({ scenario, setScenario, onStart }) {
 
         {/* --- RESULTS SECTION --- */}
         <div id="results-section" className="mb-12 md:mb-16">
-          <div className="flex items-center gap-3 mb-8 justify-center md:justify-start">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <h2 className="text-2xl font-black text-brand-indigo">
               Актуально прямо сейчас
             </h2>
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+              {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
+                <button
+                  key={f}
+                  onClick={() => setSelectedFilter(f)}
+                  className={`px-4 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex items-center gap-2 ${
+                    selectedFilter === f 
+                      ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/20' 
+                      : 'bg-white text-slate-400 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo'
+                  }`}
+                >
+                  {f === 'Активный' && <span>⚡</span>}
+                  {f === 'Пляж' && <span>🌴</span>}
+                  {f === 'Романтика' && <span>🎈</span>}
+                  {f}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-            {RESULTS.map((res) => (
+            {RESULTS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res) => (
               <div
                 key={res.id}
                 onClick={() => handleSearch(res.title, 'routes')}
