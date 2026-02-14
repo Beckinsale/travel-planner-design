@@ -153,7 +153,7 @@ function App() {
           {view === 'planner' && <div className="w-full flex-1 pb-20 md:pb-0"><PlannerPage onBack={() => setView('landing')} /></div>}
           {view === 'recommendations' && <div className="flex-1 w-full pb-20 md:pb-0"><RecommendationsPage onBack={() => setView('landing')} /></div>}
           {view === 'ai-assistant' && <div className="flex-1 w-full min-h-full md:min-h-screen"><AIAssistantPage onBack={() => setView('landing')} onProfile={() => setView('profile')} initialQuery={initialQuery} activeTab={activeTab} setActiveTab={setActiveTab} user={user} /></div>}
-          {view === 'profile' && <div className="flex-1 w-full overflow-y-auto pb-20 md:pb-0"><ProfilePage onBack={() => setView('landing')} onChat={() => handleNavigate('ai-assistant', 'chat')} user={user} setUser={setUser} /></div>}
+          {view === 'profile' && <div className="flex-1 w-full min-h-full md:min-h-screen"><ProfilePage onBack={() => setView('landing')} onChat={() => handleNavigate('ai-assistant', 'chat')} user={user} setUser={setUser} /></div>}
         </main>
         </div>
 

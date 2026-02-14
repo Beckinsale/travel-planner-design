@@ -49,7 +49,7 @@ function ProfilePage({ onBack, onChat, user, setUser }) {
   };
 
   return (
-    <div className="flex flex-col min-h-full bg-white relative">
+    <div className="flex flex-col h-full bg-white relative">
       <input 
         type="file" 
         ref={fileInputRef} 
@@ -58,7 +58,7 @@ function ProfilePage({ onBack, onChat, user, setUser }) {
         className="hidden" 
       />
       
-      <div className="flex-1 flex flex-col md:flex-row relative">
+      <div className="flex-1 flex flex-col md:flex-row relative overflow-hidden">
         {/* КАРТА (ФОН) */}
         <div className="absolute inset-0 h-full md:relative md:order-2 md:flex-1 border-l border-slate-100 bg-slate-50 z-0 overflow-hidden group">
           <div className="absolute inset-0 flex items-start md:items-center justify-center pt-[10vh] md:pt-0 pointer-events-none px-4">
@@ -80,7 +80,7 @@ function ProfilePage({ onBack, onChat, user, setUser }) {
         <div
           className="absolute bottom-0 w-full md:static md:h-full md:w-[500px] md:order-1 flex flex-col bg-white z-10 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.2)] md:shadow-none rounded-t-[2.5rem] md:rounded-none transition-height duration-75 ease-out"
           style={{
-            height: window.innerWidth < 768 ? `${sheetHeight}%` : 'auto',
+            height: window.innerWidth < 768 ? `${sheetHeight}%` : '100%',
           }}
         >
           {/* Зона перетаскивания и Навигация (Мобильная) */}
