@@ -142,9 +142,9 @@ function LandingPage({ scenario, setScenario, onStart }) {
                 <button
                   key={idx}
                   onClick={() => handleSearch(filter.query, 'chat')}
-                  className="px-3.5 py-2 md:px-6 md:py-3 bg-white border border-slate-100 rounded-xl text-slate-600 text-[11px] md:text-base font-bold hover:bg-brand-sky/5 hover:border-brand-sky/20 hover:text-brand-indigo transition-all active:scale-95 flex items-center gap-1.5 md:gap-2"
+                  className="px-3.5 py-2 md:px-4 md:py-2 bg-white border border-slate-100 rounded-xl text-slate-600 text-[11px] md:text-sm font-bold hover:bg-brand-sky/5 hover:border-brand-sky/20 hover:text-brand-indigo transition-all active:scale-95 flex items-center gap-1.5 md:gap-2 whitespace-nowrap"
                 >
-                  <span className="text-sm md:text-lg">{filter.icon}</span>
+                  <span className="text-sm md:text-base">{filter.icon}</span>
                   <span>{filter.label}</span>
                 </button>
               ))}
@@ -176,7 +176,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             {RESULTS.map((res) => (
               <div
                 key={res.id}
@@ -192,7 +192,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
                   <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
                   <div className="absolute top-3 right-3 flex gap-2">
                     {res.tags.map((tag) => (
-                      <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
+                      <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                     ))}
                   </div>
                 </div>

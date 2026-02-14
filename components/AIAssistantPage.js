@@ -160,7 +160,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                             <img src={msg.tour.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                             <div className="absolute top-3 right-3 flex gap-2">
                               {msg.tour.tags.map((tag) => (
-                                <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
+                                <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                               ))}
                             </div>
                           </div>
@@ -204,11 +204,11 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
             </div>
 
             <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[64px] md:bottom-0 md:static z-20 w-full">
-              <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 py-4 md:px-8 bg-white/50 backdrop-blur-sm w-full border-b border-slate-50">
+              <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white/50 backdrop-blur-sm w-full border-b border-slate-50">
                 {QUICK_ACTIONS.map((action, idx) => (
-                  <button key={idx} onClick={() => handleSend(action.query)} className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white hover:bg-brand-sky/5 border border-slate-100 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0">
-                    <span className="text-base md:text-lg">{action.icon}</span>
-                    <span className="text-xs md:text-sm font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
+                  <button key={idx} onClick={() => handleSend(action.query)} className="flex items-center gap-2 px-5 py-2.5 md:px-4 md:py-2 bg-white hover:bg-brand-sky/5 border border-slate-100 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0 md:shrink">
+                    <span className="text-base md:text-base">{action.icon}</span>
+                    <span className="text-xs md:text-[13px] font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
                   </button>
                 ))}
               </div>
@@ -234,7 +234,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
                 {ALL_TOURS.map((res, i) => (
                   <div key={i} onClick={() => handleSend(res.title)} className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
                     <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
@@ -245,7 +245,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                       <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
                       <div className="absolute top-3 right-3 flex gap-2">
                         {res.tags.map((tag) => (
-                          <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
+                          <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                         ))}
                       </div>
                     </div>
