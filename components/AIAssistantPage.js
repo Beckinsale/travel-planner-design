@@ -151,46 +151,46 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                       {/* КАРТОЧКА ТУРА: ТОЧНАЯ КОПИЯ ГЛАВНОЙ СТРАНИЦЫ */}
                       {msg.tour && (
                         <div className="mt-6 bg-white rounded-[2rem] p-3 shadow-2xl shadow-slate-300/50 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
-                          <div className="absolute top-6 left-6 z-10 flex items-center gap-1.5 bg-rose-500 text-white px-2.5 py-1 rounded-xl text-[10px] font-black shadow-lg shadow-rose-500/30">
-                            <Icon name="Map" size={12} className="text-white" />
+                          <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
+                            <Icon name="Map" size={14} className="md:size-4 text-white" />
                             <span>{msg.tour.routeCount}</span>
                           </div>
 
                           <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
                             <img src={msg.tour.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute top-3 right-3 flex gap-1">
+                            <div className="absolute top-3 right-3 flex gap-2">
                               {msg.tour.tags.map((tag) => (
-                                <span key={tag} className="bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-800 shadow-sm">{tag}</span>
+                                <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                               ))}
                             </div>
                           </div>
 
                           <div className="px-2 pb-2 flex-1 flex flex-col text-left">
-                            <div className="flex justify-between items-start mb-2 gap-2">
+                            <div className="flex justify-between items-start mb-4 gap-2">
                               <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight group-hover:text-brand-sky transition-colors">{msg.tour.title}</h3>
-                              <span className="bg-brand-indigo/5 text-brand-indigo px-2.5 py-1.5 rounded-lg text-sm font-black whitespace-nowrap">{msg.tour.total}</span>
+                              <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{msg.tour.total}</span>
                             </div>
                             <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{msg.tour.desc}</p>
 
                             <div className="mt-auto">
-                              <div className="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-2.5">
+                              <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
+                              <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
                                 <div className="h-full bg-brand-indigo" style={{ width: `${msg.tour.breakdown[0]}%` }}></div>
                                 <div className="h-full bg-brand-amber" style={{ width: `${msg.tour.breakdown[1]}%` }}></div>
                                 <div className="h-full bg-brand-sky" style={{ width: `${msg.tour.breakdown[2]}%` }}></div>
                               </div>
-                              <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-1">
-                                <div className="flex items-center gap-1">
-                                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-indigo"></div>
-                                  <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
+                              <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
+                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-amber"></div>
-                                  <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
+                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-sky"></div>
-                                  <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
+                                <div className="flex items-center gap-1.5">
+                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
+                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
                                 </div>
                               </div>
                             </div>
@@ -206,9 +206,9 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
             <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[64px] md:bottom-0 md:static z-20 w-full">
               <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 py-4 md:px-8 bg-white/50 backdrop-blur-sm w-full border-b border-slate-50">
                 {QUICK_ACTIONS.map((action, idx) => (
-                  <button key={idx} onClick={() => handleSend(action.query)} className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-brand-sky/5 border border-slate-100 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0">
-                    <span className="text-sm">{action.icon}</span>
-                    <span className="text-[10px] font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
+                  <button key={idx} onClick={() => handleSend(action.query)} className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white hover:bg-brand-sky/5 border border-slate-100 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0">
+                    <span className="text-base md:text-lg">{action.icon}</span>
+                    <span className="text-xs md:text-sm font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
                   </button>
                 ))}
               </div>
@@ -227,7 +227,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
           <div className={`flex-1 bg-slate-50/50 overflow-y-auto custom-scrollbar transition-all ${activeTab === 'routes' ? 'block' : 'hidden'}`}>
             <div className="p-4 md:p-10 w-full max-w-5xl mx-auto">
               <div className="mb-10 bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 w-full">
-                <h3 className="text-xl md:text-2xl font-black text-brand-indigo mb-6 flex items-center gap-2">Актуальные маршруты</h3>
+                <h3 className="text-xl md:text-2xl font-black text-brand-indigo mb-6 flex items-center gap-2">Популярные маршруты</h3>
                 <div className="relative group">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors"><Icon name="MapPin" size={20} /></div>
                   <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all" />
@@ -237,43 +237,43 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
                 {ALL_TOURS.map((res, i) => (
                   <div key={i} onClick={() => handleSend(res.title)} className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
-                    <div className="absolute top-6 left-6 z-10 flex items-center gap-1.5 bg-rose-500 text-white px-2.5 py-1 rounded-xl text-[10px] font-black shadow-lg shadow-rose-500/30">
-                      <Icon name="Map" size={12} className="text-white" />
+                    <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
+                      <Icon name="Map" size={14} className="md:size-4 text-white" />
                       <span>{res.routeCount}</span>
                     </div>
                     <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
                       <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
-                      <div className="absolute top-3 right-3 flex gap-1">
+                      <div className="absolute top-3 right-3 flex gap-2">
                         {res.tags.map((tag) => (
-                          <span key={tag} className="bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-800 shadow-sm">{tag}</span>
+                          <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                         ))}
                       </div>
                     </div>
                     <div className="px-2 pb-2 flex-1 flex flex-col text-left">
-                      <div className="flex justify-between items-start mb-2 gap-2">
+                      <div className="flex justify-between items-start mb-4 gap-2">
                         <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight group-hover:text-brand-sky transition-colors">{res.title}</h3>
-                        <span className="bg-brand-indigo/5 text-brand-indigo px-2.5 py-1.5 rounded-lg text-sm font-black whitespace-nowrap">{res.total}</span>
+                        <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{res.total}</span>
                       </div>
                       <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{res.desc}</p>
                       <div className="mt-auto">
-                        <div className="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-2.5">
+                        <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
+                        <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
                           <div className="h-full bg-brand-indigo" style={{ width: `${res.breakdown[0]}%` }}></div>
                           <div className="h-full bg-brand-amber" style={{ width: `${res.breakdown[1]}%` }}></div>
                           <div className="h-full bg-brand-sky" style={{ width: `${res.breakdown[2]}%` }}></div>
                         </div>
-                        <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-1">
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-indigo"></div>
-                            <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
+                        <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
+                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-amber"></div>
-                            <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
+                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-sky"></div>
-                            <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
+                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
                           </div>
                         </div>
                       </div>

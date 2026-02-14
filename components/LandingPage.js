@@ -142,9 +142,9 @@ function LandingPage({ scenario, setScenario, onStart }) {
                 <button
                   key={idx}
                   onClick={() => handleSearch(filter.query, 'chat')}
-                  className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-slate-600 text-xs md:text-sm font-bold hover:bg-brand-sky/5 hover:border-brand-sky/20 hover:text-brand-indigo transition-all active:scale-95 flex items-center gap-1.5"
+                  className="px-3.5 py-2 md:px-6 md:py-3 bg-white border border-slate-100 rounded-xl text-slate-600 text-[11px] md:text-base font-bold hover:bg-brand-sky/5 hover:border-brand-sky/20 hover:text-brand-indigo transition-all active:scale-95 flex items-center gap-1.5 md:gap-2"
                 >
-                  <span>{filter.icon}</span>
+                  <span className="text-sm md:text-lg">{filter.icon}</span>
                   <span>{filter.label}</span>
                 </button>
               ))}
@@ -183,46 +183,46 @@ function LandingPage({ scenario, setScenario, onStart }) {
                 onClick={() => handleSearch(res.title, 'routes')}
                 className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30"
               >
-                <div className="absolute top-6 left-6 z-10 flex items-center gap-1.5 bg-rose-500 text-white px-2.5 py-1 rounded-xl text-[10px] font-black shadow-lg shadow-rose-500/30">
-                  <Icon name="Map" size={12} className="text-white" />
+                <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
+                  <Icon name="Map" size={14} className="md:size-4 text-white" />
                   <span>{res.routeCount}</span>
                 </div>
 
                 <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
                   <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
-                  <div className="absolute top-3 right-3 flex gap-1">
+                  <div className="absolute top-3 right-3 flex gap-2">
                     {res.tags.map((tag) => (
-                      <span key={tag} className="bg-white/95 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-slate-800 shadow-sm">{tag}</span>
+                      <span key={tag} className="bg-white/95 backdrop-blur px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
                     ))}
                   </div>
                 </div>
 
                 <div className="px-2 pb-2 flex-1 flex flex-col">
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-start mb-4">
                     <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight max-w-[70%] group-hover:text-brand-sky transition-colors">{res.title}</h3>
-                    <span className="bg-brand-indigo/5 text-brand-indigo px-2.5 py-1.5 rounded-lg text-sm font-black whitespace-nowrap">{res.total}</span>
+                    <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{res.total}</span>
                   </div>
                   <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{res.desc}</p>
 
                   <div className="mt-auto">
-                    <div className="flex justify-between text-[10px] text-slate-400 font-bold mb-1 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden flex mb-2.5">
+                    <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
+                    <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
                       <div className="h-full bg-brand-indigo" style={{ width: `${res.breakdown[0]}%` }}></div>
                       <div className="h-full bg-brand-amber" style={{ width: `${res.breakdown[1]}%` }}></div>
                       <div className="h-full bg-brand-sky" style={{ width: `${res.breakdown[2]}%` }}></div>
                     </div>
-                    <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-1">
-                      <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-indigo"></div>
-                        <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
+                    <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
+                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-amber"></div>
-                        <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
+                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-brand-sky"></div>
-                        <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
+                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
                       </div>
                     </div>
                   </div>
