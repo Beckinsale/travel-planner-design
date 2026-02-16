@@ -202,7 +202,7 @@ function PlannerPage({ onBack }) {
                         <Icon name={res.weatherIcon} size={14} /> {res.temp}
                       </div>
                     </div>
-                    <div className="absolute bottom-8 left-8 right-8 text-left">
+                    <div className="absolute bottom-6 left-6 right-6 text-left">
                       <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
                         {res.title}
                       </h3>

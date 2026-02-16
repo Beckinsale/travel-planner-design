@@ -189,13 +189,14 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                     <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-4 shadow-2xl isolation-auto">
                       <img src={msg.tour.img} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem]" alt={msg.tour.title} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
-                      <div className="absolute top-6 left-6">
-                        <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
-                          <Icon name={msg.tour.weatherIcon} size={14} /> {msg.tour.temp}
-                        </div>
-                      </div>
-                      <div className="absolute bottom-8 left-8 right-8 text-left">
-                        <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">{msg.tour.title}</h3>
+                                                  <div className="absolute top-6 left-6">
+                                                    <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+                                                      <Icon name={msg.tour.weatherIcon} size={14} /> {msg.tour.temp}
+                                                    </div>
+                                                  </div>
+                                                  <div className="absolute bottom-6 left-6 right-6 text-left">
+                                                    <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">{msg.tour.title}</h3>
+                      
                         <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
                           <Icon name="MapPin" size={14} />
                           <span>{msg.tour.routeCount} маршрутов</span>

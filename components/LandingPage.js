@@ -169,6 +169,9 @@ function LandingPage({ scenario, setScenario, onStart }) {
           <video
             ref={videoRef}
             key={isDesktop ? 'hd' : 'sd'}
+
+
+            
             autoPlay
             loop
             muted
@@ -332,15 +335,27 @@ function LandingPage({ scenario, setScenario, onStart }) {
                     {/* Layla-style enhanced gradient underlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
 
-                    <div className="absolute top-6 left-6">
-                      <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
-                        <Icon name={res.weatherIcon} size={14} /> {res.temp}
-                      </div>
-                    </div>
-                    <div className="absolute bottom-10 left-10 right-10 text-left">
-                      <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-tight drop-shadow-2xl">
-                        {res.title}
-                      </h3>
+                                        <div className="absolute top-6 left-6">
+
+                                          <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+
+                                            <Icon name={res.weatherIcon} size={14} /> {res.temp}
+
+                                          </div>
+
+                                        </div>
+
+                    
+
+                                        <div className="absolute bottom-6 left-6 right-6 text-left">
+
+                                          <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-tight drop-shadow-2xl">
+
+                                            {res.title}
+
+                                          </h3>
+
+                    
                       <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
                         <Icon name="MapPin" size={14} />
                         <span>{res.routeCount} маршрутов</span>
