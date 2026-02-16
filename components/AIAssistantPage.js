@@ -67,7 +67,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
     {
       id: 1,
       type: 'bot',
-      text: 'Привет! Я **ваш личный AI тревел-гид**. Расскажите, куда хотите отправиться, и я подберу идеальный маршрут.',
+      text: 'Привет! Я **ваш личный AI гид**. Расскажите, куда хотите отправиться, и я подберу идеальный маршрут.',
     },
   ]);
 
@@ -155,7 +155,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                   <img src={aiAvatarUrl} className="w-full h-full object-cover rounded-full" />
                 </div>
                 <div>
-                  <h3 className="text-sm md:text-xl font-black text-brand-indigo leading-tight uppercase tracking-tight">AI Тревел-гид</h3>
+                  <h3 className="text-sm md:text-xl font-black text-brand-indigo leading-tight tracking-tight">AI Гид</h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <span className="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-wider">онлайн</span>
@@ -294,10 +294,10 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                     <button
                       key={f}
                       onClick={() => setSelectedFilter(f)}
-                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 ${
+                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
                         selectedFilter === f 
-                          ? 'bg-brand-sky text-white shadow-xl shadow-brand-sky/20' 
-                          : 'bg-white text-slate-500 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
+                          ? 'bg-brand-sky text-white border-brand-sky shadow-xl shadow-brand-sky/20' 
+                          : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
                       }`}
                     >
                       {f === 'Активный' && <span className="text-sm">⚡</span>}

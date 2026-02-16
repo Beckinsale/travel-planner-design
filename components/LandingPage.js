@@ -247,10 +247,10 @@ function LandingPage({ scenario, setScenario, onStart }) {
                   <button
                     key={f}
                     onClick={() => setSelectedFilter(f)}
-                    className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none ${
+                    className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none border-2 ${
                       selectedFilter === f
-                        ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/15'
-                        : 'bg-white text-slate-500 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
+                        ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15'
+                        : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
                     }`}
                   >
                     {f === 'Активный' && <span className="text-sm">⚡</span>}
