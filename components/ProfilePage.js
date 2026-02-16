@@ -84,15 +84,15 @@ function ProfilePage({ onBack, onChat, user, setUser }) {
           }}
         >
           {/* Зона перетаскивания и Навигация (Мобильная) */}
-          <div className="w-full pt-3 shrink-0 bg-white rounded-t-[2.5rem] md:rounded-none border-b border-slate-50">
-            <div
-              className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 md:hidden cursor-grab active:cursor-grabbing touch-none"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            ></div>
+          <div 
+            className="w-full pt-3 shrink-0 bg-white rounded-t-[2.5rem] md:rounded-none border-b border-slate-50 md:cursor-default cursor-grab active:cursor-grabbing touch-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2 md:hidden"></div>
 
-            <div className="px-4 md:px-6 py-4 flex items-center justify-between">
+            <div className="px-4 md:px-6 py-4 flex items-center justify-between pointer-events-none">
               <h1 className="text-xl font-black text-brand-indigo">
                 Мой профиль
               </h1>

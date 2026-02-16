@@ -156,7 +156,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 space-y-6 bg-slate-50/30 w-full pb-10">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 space-y-6 bg-slate-50/30 w-full pb-4">
               {messages.map((msg, index) => (
                 <div 
                   key={msg.id} 
@@ -243,7 +243,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
             </div>
 
             <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[50px] md:bottom-0 md:static z-20 w-full">
-              <div className="absolute top-full left-0 right-0 h-20 bg-white md:hidden -z-10" />
               <div className="relative">
                 <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white w-full border-b border-slate-50">
                   {QUICK_ACTIONS.map((action, idx) => (
