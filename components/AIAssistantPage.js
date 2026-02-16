@@ -62,7 +62,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
     {
       id: 1,
       type: 'bot',
-      text: 'Привет! Куда отправимся? Я могу подобрать интересный маршрут прямо из вашего города.',
+      text: 'Привет! Куда отправимся? Я могу подобрать оптимальный маршрут прямо из вашего города.',
     },
   ]);
 
