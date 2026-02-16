@@ -5,30 +5,40 @@ function RecommendationsPage({ onBack }) {
       route: 'Москва → Стамбул → Анталья',
       price: '55 000 ₽',
       time: '5ч 30м',
+      temp: '+24°',
+      weatherIcon: 'Sun',
     },
     {
       id: 2,
       route: 'Москва → Дубай → Пхукет',
       price: '72 000 ₽',
       time: '12ч 10м',
+      temp: '+31°',
+      weatherIcon: 'CloudSun',
     },
     {
       id: 3,
       route: 'Алматы → Тбилиси → Батуми',
       price: '48 000 ₽',
       time: '6ч 15м',
+      temp: '+18°',
+      weatherIcon: 'Cloud',
     },
     {
       id: 4,
       route: 'Ереван → Рим → Милан',
       price: '60 000 ₽',
       time: '8ч 45м',
+      temp: '+16°',
+      weatherIcon: 'CloudRain',
     },
     {
       id: 5,
       route: 'Стамбул → Париж → Лиссабон',
       price: '85 000 ₽',
       time: '14ч 20м',
+      temp: '+21°',
+      weatherIcon: 'Sun',
     },
   ];
 
@@ -140,11 +150,14 @@ function RecommendationsPage({ onBack }) {
                 </div>
               </div>
               <div className="flex gap-3 text-xs md:text-sm">
-                <span className="px-2.5 py-1 rounded-lg bg-brand-amber/10 text-brand-indigo font-semibold border border-brand-amber/20 flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-lg bg-brand-amber/10 text-brand-indigo font-semibold border border-brand-amber/20 flex items-center gap-1 shrink-0">
                   <Icon name="CreditCard" size={12} /> {rec.price}
                 </span>
-                <span className="px-2.5 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200 flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200 flex items-center gap-1 shrink-0">
                   <Icon name="Clock" size={12} /> {rec.time}
+                </span>
+                <span className={`px-2.5 py-1 rounded-lg ${parseInt(rec.temp) > 0 ? 'bg-brand-amber/10 text-brand-indigo border-brand-amber/20' : 'bg-brand-sky/10 text-brand-sky border-brand-sky/20'} flex items-center gap-1 shrink-0 font-bold`}>
+                  <Icon name={rec.weatherIcon} size={12} /> {rec.temp}
                 </span>
               </div>
             </div>

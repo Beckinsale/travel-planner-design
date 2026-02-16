@@ -1,8 +1,17 @@
 function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActiveTab, user }) {
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [isTyping, setIsTyping] = React.useState(false);
   const [inputText, setInputText] = React.useState('');
+  const lastMsgRef = React.useRef(null);
+  const isFirstRender = React.useRef(true);
   
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      lastMsgRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 100);
+  };
+
   const ALL_TOURS = [
     {
       id: 1,
@@ -13,6 +22,8 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       tags: ['⚡ Активный', 'РФ'],
       breakdown: [30, 50, 20],
       routeCount: '1.2к',
+      temp: '+12°',
+      weatherIcon: 'CloudSun',
     },
     {
       id: 2,
@@ -23,16 +34,20 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       tags: ['⚡ Активный', 'ОАЭ'],
       breakdown: [40, 35, 25],
       routeCount: '4.2к',
+      temp: '+32°',
+      weatherIcon: 'Sun',
     },
     {
       id: 3,
       title: 'Мальдивы: Рай',
       desc: 'Райский отдых на воде с видом на бескрайний океан.',
       total: '125 000 ₽',
-      img: 'https://images.pexels.com/photos/1287441/pexels-photo-1287441.jpeg?auto=compress&cs=tinysrgb&w=800',
+      img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
       tags: ['🌴 Пляж', 'Мальдивы'],
       breakdown: [30, 55, 15],
       routeCount: '1.8к',
+      temp: '+29°',
+      weatherIcon: 'Sun',
     },
     {
       id: 4,
@@ -43,6 +58,8 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       tags: ['🎈 Романтика', 'Турция'],
       breakdown: [35, 40, 25],
       routeCount: '2.5к',
+      temp: '+18°',
+      weatherIcon: 'Cloud',
     },
   ];
 
@@ -50,7 +67,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
     {
       id: 1,
       type: 'bot',
-      text: 'Привет! Я **AI-ассистент** по путешествиям. Расскажите, куда хотите отправиться, и я подберу идеальный маршрут.',
+      text: 'Привет! Я **ваш личный AI тревел-гид**. Расскажите, куда хотите отправиться, и я подберу идеальный маршрут.',
     },
   ]);
 
@@ -63,7 +80,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
     { icon: '📸', label: 'Места', query: 'Главные достопримечательности в Дубае' },
   ];
 
-  const handleSend = (text) => {
+  const handleSend = (text, isMagic = false) => {
     const message = text || inputText;
     if (!message || !message.trim()) return;
 
@@ -71,27 +88,43 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
     setMessages((prev) => [...prev, userMsg]);
     setInputText('');
 
-    setIsGenerating(true);
+    if (isMagic) setIsGenerating(true); else setIsTyping(true);
+    
+    scrollToBottom();
+
     setTimeout(() => {
       setIsGenerating(false);
+      setIsTyping(false);
       const foundTour = ALL_TOURS.find(t => t.title === message);
+      
       const botMsg = {
         id: Date.now() + 1,
         type: 'bot',
         text: foundTour 
           ? `Отличный выбор! Вот детали маршрута **${foundTour.title}**, который я подготовила:`
           : `Это отличный выбор! Я начала подбирать лучшие локации по запросу: **"${message}"**. \n\nСчитаю бюджет и строю оптимальный путь...`,
-        tour: foundTour || null
+        tour: foundTour || null,
+        suggestions: foundTour ? [
+          { label: '📅 Выбрать даты', query: `Выбрать даты для ${foundTour.title}` },
+          { label: '🏨 Отели', query: `Лучшие отели в ${foundTour.title}` },
+          { label: '💰 Итоговая цена', query: `Рассчитать стоимость ${foundTour.title}` }
+        ] : []
       };
       setMessages((prev) => [...prev, botMsg]);
-    }, 1000);
+      scrollToBottom();
+    }, 1500);
   };
 
   React.useEffect(() => {
-    if (initialQuery) {
-      handleSend(initialQuery);
+    if (initialQuery && isFirstRender.current) {
+      isFirstRender.current = false;
+      handleSend(initialQuery, true);
     }
   }, [initialQuery]);
+
+  React.useEffect(() => {
+    if (!isGenerating) scrollToBottom();
+  }, [messages, isTyping]);
 
   const aiAvatarUrl = "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop";
 
@@ -122,7 +155,7 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                   <img src={aiAvatarUrl} className="w-full h-full object-cover rounded-full" />
                 </div>
                 <div>
-                  <h3 className="text-sm md:text-xl font-black text-brand-indigo leading-tight uppercase tracking-tight">AI Ассистент</h3>
+                  <h3 className="text-sm md:text-xl font-black text-brand-indigo leading-tight uppercase tracking-tight">AI Тревел-гид</h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                     <span className="text-[10px] md:text-xs text-slate-400 font-bold uppercase tracking-wider">онлайн</span>
@@ -131,9 +164,12 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 space-y-6 bg-slate-50/30 w-full">
-              {messages.map((msg) => (
-                <div key={msg.id} className={`flex w-full ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 space-y-6 bg-slate-50/30 w-full pb-10">
+              {messages.map((msg, index) => (
+                <div 
+                  key={msg.id} 
+                  className={`flex flex-col w-full ${msg.type === 'user' ? 'items-end' : 'items-start'}`}
+                >
                   <div className={`flex flex-col max-w-[95%] md:max-w-[80%] ${msg.type === 'user' ? 'items-end' : 'items-start'}`}>
                     <div className={`p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] shadow-sm text-sm md:text-lg leading-relaxed break-words w-full ${
                       msg.type === 'user'
@@ -148,71 +184,91 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                         )}
                       </div>
 
-                      {/* КАРТОЧКА ТУРА: ТОЧНАЯ КОПИЯ ГЛАВНОЙ СТРАНИЦЫ */}
+                      {/* КАРТОЧКА ТУРА В ЧАТЕ */}
                       {msg.tour && (
-                        <div className="mt-6 bg-white rounded-[2rem] p-3 shadow-2xl shadow-slate-300/50 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
-                          <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
-                            <Icon name="Map" size={14} className="md:size-4 text-white" />
-                            <span>{msg.tour.routeCount}</span>
-                          </div>
+                        <div className="mt-6 group cursor-pointer">
+                          <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-4 shadow-2xl isolation-auto">
+                            <img
+                              src={msg.tour.img}
+                              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
+                              alt={msg.tour.title}
+                            />
+                            {/* Layla-style enhanced gradient underlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
 
-                          <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
-                            <img src={msg.tour.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                            <div className="absolute top-3 right-3 flex gap-2">
-                              {msg.tour.tags.map((tag) => (
-                                <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="px-2 pb-2 flex-1 flex flex-col text-left">
-                            <div className="flex justify-between items-start mb-4 gap-2">
-                              <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight group-hover:text-brand-sky transition-colors">{msg.tour.title}</h3>
-                              <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{msg.tour.total}</span>
-                            </div>
-                            <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{msg.tour.desc}</p>
-
-                            <div className="mt-auto">
-                              <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                              <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
-                                <div className="h-full bg-brand-indigo" style={{ width: `${msg.tour.breakdown[0]}%` }}></div>
-                                <div className="h-full bg-brand-amber" style={{ width: `${msg.tour.breakdown[1]}%` }}></div>
-                                <div className="h-full bg-brand-sky" style={{ width: `${msg.tour.breakdown[2]}%` }}></div>
+                            <div className="absolute top-6 left-6">
+                              <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+                                <Icon name={msg.tour.weatherIcon} size={14} /> {msg.tour.temp}
                               </div>
-                              <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
-                                <div className="flex items-center gap-1.5">
-                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
-                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
-                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                  <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
-                                  <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
-                                </div>
+                            </div>
+
+                            <div className="absolute bottom-8 left-8 right-8 text-left">
+                              <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
+                                {msg.tour.title}
+                              </h3>
+                              <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                                <Icon name="MapPin" size={14} />
+                                <span>{msg.tour.routeCount} маршрутов</span>
+                              </div>
+                              <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
+                                {msg.tour.total}
                               </div>
                             </div>
                           </div>
+                          <p className="text-slate-500 text-base md:text-lg font-medium leading-relaxed px-4 text-left">
+                            {msg.tour.desc}
+                          </p>
                         </div>
                       )}
                     </div>
+                    {msg.suggestions && msg.suggestions.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-3 animate-in slide-in-from-left-4 duration-500">
+                        {msg.suggestions.map((s, idx) => (
+                          <button 
+                            key={idx} 
+                            onClick={() => handleSend(s.query)} 
+                            className="px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs md:text-sm font-bold text-slate-500 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50 transition-all active:scale-95 shadow-sm"
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
+              
+              {isTyping && (
+                <div className="flex items-start gap-3 w-full animate-in fade-in slide-in-from-left-4 duration-300">
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-brand-sky/20">
+                    <img src={aiAvatarUrl} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="bg-white text-slate-800 border border-slate-100 p-4 md:px-6 md:py-4 rounded-[1.5rem] md:rounded-[2rem] rounded-tl-none shadow-sm shadow-slate-200/50 flex items-center gap-1.5 mt-1">
+                    <div className="w-1.5 h-1.5 bg-brand-sky/60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-1.5 h-1.5 bg-brand-sky/60 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-1.5 h-1.5 bg-brand-sky/60 rounded-full animate-bounce"></div>
+                  </div>
+                </div>
+              )}
+
+              <div ref={lastMsgRef} className="h-4" />
             </div>
 
-            <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[64px] md:bottom-0 md:static z-20 w-full">
-              <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white/50 backdrop-blur-sm w-full border-b border-slate-50">
+            <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[50px] md:bottom-0 md:static z-20 w-full">
+              <div className="absolute top-full left-0 right-0 h-20 bg-white md:hidden -z-10" />
+              <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white w-full border-b border-slate-50">
                 {QUICK_ACTIONS.map((action, idx) => (
-                  <button key={idx} onClick={() => handleSend(action.query)} className="flex items-center gap-2 px-5 py-2.5 md:px-4 md:py-2 bg-white hover:bg-brand-sky/5 border border-slate-100 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0 md:shrink">
+                  <button 
+                    key={idx} 
+                    onClick={() => handleSend(action.query)} 
+                    className="flex items-center gap-2 px-5 py-2.5 md:px-4 md:py-2 bg-white border border-slate-100 hover:border-brand-sky/30 hover:bg-slate-50 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0 md:shrink"
+                  >
                     <span className="text-base md:text-base">{action.icon}</span>
                     <span className="text-xs md:text-[13px] font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
                   </button>
                 ))}
               </div>
-              <div className="p-4 md:p-8 w-full">
+              <div className="p-4 md:p-8 w-full bg-white">
                 <div className="max-w-4xl mx-auto relative flex items-center w-full">
                   <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSend()} placeholder="Напишите сообщение..." className="w-full pl-6 pr-28 py-4 md:py-6 bg-slate-50 rounded-[1.5rem] md:rounded-[2rem] border-none focus:ring-4 focus:ring-brand-sky/10 outline-none text-slate-800 font-bold text-sm md:text-xl transition-all placeholder:text-slate-400 placeholder:font-normal" />
                   <div className="absolute right-2 flex items-center space-x-1">
@@ -234,14 +290,14 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                 </div>
 
                 <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
-                  {['Все', ...new Set(ALL_TOURS.flatMap(t => t.tags).filter(tag => tag.includes('⚡') || tag.includes('🌴') || tag.includes('🎈')).map(tag => tag.split(' ')[1]))].map(f => (
+                  {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
                     <button
                       key={f}
                       onClick={() => setSelectedFilter(f)}
-                      className={`px-5 py-2.5 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex items-center gap-2 ${
+                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 ${
                         selectedFilter === f 
-                          ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/20' 
-                          : 'bg-slate-50 text-slate-400 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo'
+                          ? 'bg-brand-sky text-white shadow-xl shadow-brand-sky/20' 
+                          : 'bg-white text-slate-500 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
                       }`}
                     >
                       {f === 'Активный' && <span className="text-sm">⚡</span>}
@@ -255,48 +311,42 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
                 {ALL_TOURS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res, i) => (
-                  <div key={i} onClick={() => handleSend(res.title)} className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30">
-                    <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
-                      <Icon name="Map" size={14} className="md:size-4 text-white" />
-                      <span>{res.routeCount}</span>
-                    </div>
-                    <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
-                      <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
-                      <div className="absolute top-3 right-3 flex gap-2">
-                        {res.tags.map((tag) => (
-                          <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="px-2 pb-2 flex-1 flex flex-col text-left">
-                      <div className="flex justify-between items-start mb-4 gap-2">
-                        <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight group-hover:text-brand-sky transition-colors">{res.title}</h3>
-                        <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{res.total}</span>
-                      </div>
-                      <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{res.desc}</p>
-                      <div className="mt-auto">
-                        <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                        <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
-                          <div className="h-full bg-brand-indigo" style={{ width: `${res.breakdown[0]}%` }}></div>
-                          <div className="h-full bg-brand-amber" style={{ width: `${res.breakdown[1]}%` }}></div>
-                          <div className="h-full bg-brand-sky" style={{ width: `${res.breakdown[2]}%` }}></div>
+                  <div
+                    key={i}
+                    onClick={() => handleSearch(res.title)}
+                    className="group cursor-pointer"
+                  >
+                    <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
+                      <img
+                        src={res.img}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
+                        alt={res.title}
+                      />
+                      {/* Layla-style enhanced gradient underlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
+
+                      <div className="absolute top-6 left-6">
+                        <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+                          <Icon name={res.weatherIcon} size={14} /> {res.temp}
                         </div>
-                        <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
-                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
-                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
-                            <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
-                          </div>
+                      </div>
+
+                      <div className="absolute bottom-8 left-8 right-8 text-left">
+                        <h3 className="text-3xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
+                          {res.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                          <Icon name="MapPin" size={14} />
+                          <span>{res.routeCount} маршрутов</span>
+                        </div>
+                        <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
+                          {res.total}
                         </div>
                       </div>
                     </div>
+                    <p className="text-slate-500 text-lg font-medium leading-relaxed px-4 text-left">
+                      {res.desc}
+                    </p>
                   </div>
                 ))}
               </div>

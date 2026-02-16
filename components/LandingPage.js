@@ -1,13 +1,34 @@
 function LandingPage({ scenario, setScenario, onStart }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
+  const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
+
+  // Адаптивное количество строк для поиска (Mobile First logic)
+  const [inputRows, setInputRows] = React.useState(3);
+  const [isDesktop, setIsDesktop] = React.useState(window.innerWidth >= 1024);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setIsDesktop(width >= 1024);
+      if (width >= 768) {
+        setInputRows(1); // Планшеты и десктопы
+      } else if (width >= 375) {
+        setInputRows(2); // Стандартные мобильные
+      } else {
+        setInputRows(3); // Маленькие экраны (< 375px)
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSearch = (query, target) => {
-    // target может быть 'chat' или 'routes'
     onStart(query || searchQuery, target || 'chat');
   };
 
-  // 4 ГОТОВЫХ ВАРИАНТА
   const RESULTS = [
     {
       id: 1,
@@ -18,6 +39,8 @@ function LandingPage({ scenario, setScenario, onStart }) {
       tags: ['⚡ Активный', 'РФ'],
       breakdown: [30, 50, 20],
       routeCount: '1.2к',
+      temp: '+12°',
+      weatherIcon: 'CloudSun',
     },
     {
       id: 2,
@@ -28,16 +51,20 @@ function LandingPage({ scenario, setScenario, onStart }) {
       tags: ['⚡ Активный', 'ОАЭ'],
       breakdown: [40, 35, 25],
       routeCount: '4.2к',
+      temp: '+32°',
+      weatherIcon: 'Sun',
     },
     {
       id: 3,
       title: 'Мальдивы: Рай',
       desc: 'Райский отдых на воде с видом на бескрайний океан.',
       total: '125 000 ₽',
-      img: 'https://images.pexels.com/photos/1287441/pexels-photo-1287441.jpeg?auto=compress&cs=tinysrgb&w=800',
+      img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
       tags: ['🌴 Пляж', 'Мальдивы'],
       breakdown: [30, 55, 15],
       routeCount: '1.8к',
+      temp: '+29°',
+      weatherIcon: 'Sun',
     },
     {
       id: 4,
@@ -48,25 +75,23 @@ function LandingPage({ scenario, setScenario, onStart }) {
       tags: ['🎈 Романтика', 'Турция'],
       breakdown: [35, 40, 25],
       routeCount: '2.5к',
+      temp: '+18°',
+      weatherIcon: 'Cloud',
     },
   ];
 
-  // ОБНОВЛЕННЫЕ ЧИПСЫ
   const QUICK_FILTERS = [
     { icon: '👍', label: 'Очень хвалят', query: 'Рекомендуемое' },
     { icon: '🌊', label: 'Хочу на море', query: 'Море' },
     { icon: '🔥', label: 'Хит сезона', query: 'Популярное' },
     { icon: '⚡', label: 'Лучшее из недорогих', query: 'Бюджетно' },
-    { icon: '🌴', label: 'Пляж', query: 'Пляжный отдых' },
-    { icon: '🏔️', label: 'Горы', query: 'Горы' },
   ];
 
-  // FAQ
   const FAQ_CARDS = [
     {
       id: 1,
       title: 'Как работает сервис?',
-      desc: 'Просто напиши свои пожелания. Мы проанализируем тысячи вариантов и соберем идеальный маршрут под твой бюджет.',
+      desc: 'Просто напишите свои пожелания. Наша система проанализирует тысячи вариантов и соберем идеальный маршрут под твой бюджет.',
       image:
         'https://images.unsplash.com/photo-1524850011238-e3d235c7d4c9?q=80&w=2064&auto=format&fit=crop',
     },
@@ -87,186 +112,233 @@ function LandingPage({ scenario, setScenario, onStart }) {
   ];
 
   return (
-    <div className="relative flex flex-col min-h-full">
-      {/* Фон */}
-      <div className="absolute top-0 left-0 w-full h-[1000px] bg-gradient-to-b from-brand-bg via-white to-transparent pointer-events-none z-0"></div>
+    <div className="relative flex flex-col min-h-full bg-white">
+      {/* 1. CINEMATIC HERO SECTION (Layla Style) */}
+      <div className="relative h-[95vh] md:h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* Background Layer */}
+        <div className="absolute inset-0 z-0">
+          {/* Static Image Fallback (Replaces Gradient) */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center z-[-1]" 
+            style={{ backgroundImage: 'url(./assets/video/hero-poster.jpg)' }}
+          ></div>
+          <video
+            key={isDesktop ? 'hd' : 'sd'}
+            autoPlay
+            loop
+            muted
+            playsInline
+            onEnded={(e) => e.target.play()}
+            className="w-full h-full object-cover"
+            poster="./assets/video/hero-poster.jpg"
+          >
+            {isDesktop ? (
+              <>
+                <source src="./assets/video/hero-bg-hd.webm" type="video/webm" />
+                <source src="./assets/video/hero-bg-hd.mp4" type="video/mp4" />
+              </>
+            ) : (
+              <>
+                <source src="./assets/video/hero-bg-small.webm" type="video/webm" />
+                <source src="./assets/video/hero-bg-small.mp4" type="video/mp4" />
+              </>
+            )}
+          </video>
+          {/* Multi-layered Overlays */}
+          <div className="absolute inset-0 bg-black/10"></div>{' '}
+          {/* Легкое общее затемнение */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent"></div>{' '}
+          {/* Затемнение только сверху */}
+        </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 md:px-6 pt-6 md:pt-32 pb-10 md:pb-20 w-full">
-        <div className="flex flex-col items-center">
-          {/* 1. ЗАГОЛОВОК */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl md:text-7xl font-black text-brand-indigo mb-4 tracking-tight leading-tight">
-              Запланируй маршрут <br />
-              <span className="text-brand-sky">за 2 минуты</span>
+        {/* Content Layer */}
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-6 text-center">
+          <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000">
+            <h1 className="text-5xl md:text-8xl font-black text-white mb-6 tracking-tight leading-[0.9] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+              Личный <br /> <span className="text-brand-sky">тревел-гид</span>
             </h1>
-          </div>
-
-          {/* 2. ТЕКСТ ПРИЗЫВА (ПОДНЯТ ВЫШЕ, СКРЫТ НА МОБИЛКЕ) */}
-          <div className="text-center mb-8 md:mb-12 px-4 font-medium max-w-2xl mx-auto hidden md:block">
-            <p className="text-slate-500 text-sm sm:text-base md:text-xl leading-relaxed">
-              Не просто билеты — полноценный маршрут с контролем расходов.
-              AI-подбор, черновики и карта.
+            <p className="text-white text-lg md:text-2xl font-medium mb-12 max-w-3xl mx-auto drop-shadow-2xl leading-relaxed">
+              Планирование ещё никогда не было таким простым.
             </p>
           </div>
 
-          {/* 3. ФОРМА ПОИСКА */}
-          <div className="w-full bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_70px_-10px_rgba(30,27,75,0.1)] border border-slate-100 p-2 mb-8 relative z-20">
-            <div className="flex flex-col md:flex-row gap-2 px-1 pb-1 md:gap-3 md:px-2 md:pb-2 items-center">
-              <div className="w-full relative group">
-                <textarea
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={`Куда отправимся?
-Например: Алтай за 40 000 руб.`}
-                  rows="2"
-                  className="w-full h-24 md:h-28 pl-4 pr-14 py-4 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 focus:bg-white outline-none text-slate-800 font-bold text-base md:text-xl placeholder:text-slate-400 placeholder:font-normal transition-all resize-none overflow-hidden"
-                />
+          {/* MINIMALIST AI SEARCH BAR */}
+          <div className="w-full max-w-3xl mx-auto animate-in zoom-in-95 duration-700 delay-300">
+            <div className="bg-white/10 backdrop-blur-3xl p-1.5 md:p-2.5 rounded-[2.5rem] md:rounded-[4rem] border border-white/20 shadow-2xl shadow-black/20">
+              <div className="bg-white rounded-[2.2rem] md:rounded-[3.5rem] flex items-center p-1 md:p-2 pr-2 md:pr-4 focus-within:ring-4 focus-within:ring-brand-sky/10 transition-all">
+                <div className="flex-1 relative group">
+                  <textarea
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Например: Сочи за 45 000 руб на 5 дней"
+                    rows={inputRows}
+                    className="w-full py-3 md:py-6 pl-6 md:pl-10 pr-12 bg-transparent outline-none text-slate-800 font-bold text-base md:text-xl placeholder:text-slate-400 placeholder:font-normal resize-none overflow-hidden leading-snug md:leading-normal"
+                  />
+                  <button className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300 hover:text-brand-sky transition-colors">
+                    <Icon name="Mic" size={28} />
+                  </button>
+                </div>
                 <button
-                  title="Голосовой ввод"
-                  className="absolute right-3 bottom-3 p-3 text-slate-400 hover:text-brand-sky hover:bg-brand-sky/10 rounded-xl transition-all active:scale-90 group"
+                  onClick={() => handleSearch(searchQuery, 'chat')}
+                  className="w-14 h-14 md:w-20 md:h-20 bg-brand-amber text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all shrink-0"
                 >
-                  <Icon name="Mic" size={24} className="group-hover:animate-pulse" />
+                  <Icon name="ArrowLeft" size={32} className="rotate-180" />
                 </button>
               </div>
-
-              <button
-                onClick={() => handleSearch(searchQuery, 'chat')}
-                className="w-full md:w-auto md:min-w-[180px] h-16 md:h-20 px-8 bg-brand-amber hover:bg-brand-amber/90 text-white rounded-2xl flex items-center justify-center shadow-lg transition-all active:scale-95 text-base md:text-lg font-black uppercase tracking-tight shrink-0"
-              >
-                ПОДОБРАТЬ
-              </button>
             </div>
 
-            {/* ЧИПСЫ */}
-            <div className="px-2 pb-2 pt-1 flex flex-wrap gap-2 justify-center md:justify-start">
+            {/* Context suggestions */}
+            <div className="mt-6 flex flex-wrap gap-2 justify-center">
               {QUICK_FILTERS.map((filter, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSearch(filter.query, 'chat')}
-                  className="px-3.5 py-2 md:px-4 md:py-2 bg-white border border-slate-100 rounded-xl text-slate-600 text-[11px] md:text-sm font-bold hover:bg-brand-sky/5 hover:border-brand-sky/20 hover:text-brand-indigo transition-all active:scale-95 flex items-center gap-1.5 md:gap-2 whitespace-nowrap"
+                  className="px-5 py-2 bg-white/10 backdrop-blur-md border border-white/10 rounded-full text-white text-xs md:text-sm font-bold hover:bg-white/20 transition-all"
                 >
-                  <span className="text-sm md:text-base">{filter.icon}</span>
-                  <span>{filter.label}</span>
+                  {filter.icon} {filter.label}
                 </button>
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* 4. СТАТИСТИКА (ИСПРАВЛЕНО ОТОБРАЖЕНИЕ) */}
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-12 md:mb-20 px-4">
-            <div className="flex items-center gap-2 text-slate-400">
-              <Icon name="Map" size={16} className="text-brand-sky/60" />
-              <span className="text-xs md:text-sm font-bold tracking-wide uppercase">
-                <span className="text-slate-600">14 280</span> маршрутов создано
-              </span>
+      {/* 2. MAIN CONTENT (Smooth transition from hero) */}
+      <div className="relative z-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 py-24 w-full">
+          {/* STATISTICS GRID */}
+          <div className="flex flex-wrap justify-center gap-x-12 gap-y-10 mb-32">
+            <div className="text-center">
+              <div className="text-4xl md:text-6xl font-black text-brand-indigo mb-2">
+                14k+
+              </div>
+              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
+                Маршрутов
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-slate-400">
-              <Icon name="CreditCard" size={16} className="text-brand-amber/60" />
-              <span className="text-xs md:text-sm font-bold tracking-wide uppercase">
-                <span className="text-emerald-600">~15%</span> экономии бюджета
-              </span>
+            <div className="w-px h-16 bg-slate-100 hidden md:block"></div>
+            <div className="text-center">
+              <div className="text-4xl md:text-6xl font-black text-emerald-500 mb-2">
+                15%
+              </div>
+              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
+                Экономия
+              </div>
+            </div>
+            <div className="w-px h-16 bg-slate-100 hidden md:block"></div>
+            <div className="text-center">
+              <div className="text-4xl md:text-6xl font-black text-brand-amber mb-2">
+                24/7
+              </div>
+              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
+                В любое время
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* --- RESULTS SECTION --- */}
-        <div id="results-section" className="mb-12 md:mb-16">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <h2 className="text-2xl font-black text-brand-indigo">
-              Актуально прямо сейчас
+          {/* POPULAR DESTINATIONS */}
+          <div className="mb-32">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
+              <h2 className="text-4xl md:text-7xl font-black text-brand-indigo tracking-tight">
+                Популярное <br /> <span className="text-brand-sky">сейчас</span>
+              </h2>
+              <div className="flex gap-2 overflow-x-auto md:overflow-visible no-scrollbar pb-2 md:pb-0 md:flex-nowrap">
+                {['Все', 'Активный', 'Пляж', 'Романтика'].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setSelectedFilter(f)}
+                    className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none ${
+                      selectedFilter === f
+                        ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/15'
+                        : 'bg-white text-slate-500 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
+                    }`}
+                  >
+                    {f === 'Активный' && <span className="text-sm">⚡</span>}
+                    {f === 'Пляж' && <span className="text-sm">🌴</span>}
+                    {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16">
+              {RESULTS.filter(
+                (tour) =>
+                  selectedFilter === 'Все' ||
+                  tour.tags.some((tag) => tag.includes(selectedFilter)),
+              ).map((res) => (
+                <div
+                  key={res.id}
+                  onClick={() => handleSearch(res.title, 'routes')}
+                  className="group cursor-pointer"
+                >
+                  <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-8 shadow-2xl isolation-auto">
+                    <img
+                      src={res.img}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
+                      alt={res.title}
+                    />
+                    {/* Layla-style enhanced gradient underlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
+
+                    <div className="absolute top-6 left-6">
+                      <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+                        <Icon name={res.weatherIcon} size={14} /> {res.temp}
+                      </div>
+                    </div>
+
+                    <div className="absolute bottom-10 left-10 right-10 text-left">
+                      <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-tight drop-shadow-2xl">
+                        {res.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                        <Icon name="MapPin" size={14} />
+                        <span>{res.routeCount} маршрутов</span>
+                      </div>
+                      <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
+                        {res.total}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-slate-500 text-xl font-medium leading-relaxed px-4">
+                    {res.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FAQ ZIGZAG */}
+          <div className="pt-12 md:pt-24">
+            <h2 className="text-4xl md:text-7xl font-black text-brand-indigo mb-10 md:mb-20 tracking-tight">
+              Ответы <br /> <span className="text-brand-sky">на вопросы</span>
             </h2>
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
-              {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
-                <button
-                  key={f}
-                  onClick={() => setSelectedFilter(f)}
-                  className={`px-4 py-2 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all flex items-center gap-2 ${
-                    selectedFilter === f 
-                      ? 'bg-brand-sky text-white shadow-lg shadow-brand-sky/20' 
-                      : 'bg-white text-slate-400 border border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo'
-                  }`}
+            <div className="space-y-32">
+              {FAQ_CARDS.map((card, idx) => (
+                <div
+                  key={card.id}
+                  className={`flex flex-col md:flex-row items-center gap-12 md:gap-24 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
                 >
-                  {f === 'Активный' && <span>⚡</span>}
-                  {f === 'Пляж' && <span>🌴</span>}
-                  {f === 'Романтика' && <span>🎈</span>}
-                  {f}
-                </button>
+                  <div className="w-full md:w-1/2 aspect-square md:aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl">
+                    <img
+                      src={card.image}
+                      className="w-full h-full object-cover"
+                      alt={card.title}
+                    />
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <h4 className="text-3xl md:text-5xl font-black text-brand-indigo mb-8 leading-tight tracking-tight">
+                      {card.title}
+                    </h4>
+                    <p className="text-slate-500 text-xl md:text-2xl font-medium leading-relaxed">
+                      {card.desc}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-            {RESULTS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res) => (
-              <div
-                key={res.id}
-                onClick={() => handleSearch(res.title, 'routes')}
-                className="bg-white rounded-[2rem] p-3 shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col transition-all duration-300 relative group cursor-pointer hover:border-brand-sky/30"
-              >
-                <div className="absolute top-6 left-6 z-10 flex items-center gap-2 bg-rose-500 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs md:text-sm font-black shadow-lg shadow-rose-500/30">
-                  <Icon name="Map" size={14} className="md:size-4 text-white" />
-                  <span>{res.routeCount}</span>
-                </div>
-
-                <div className="h-48 md:h-64 rounded-[1.5rem] overflow-hidden relative mb-4">
-                  <img src={res.img} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={res.title} />
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    {res.tags.map((tag) => (
-                      <span key={tag} className="bg-white/95 backdrop-blur px-2 py-1 md:px-4 md:py-2 rounded-xl text-[10px] md:text-sm font-bold text-slate-800 shadow-sm">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="px-2 pb-2 flex-1 flex flex-col">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="font-black text-xl md:text-2xl text-brand-indigo leading-tight max-w-[70%] group-hover:text-brand-sky transition-colors">{res.title}</h3>
-                    <span className="bg-brand-indigo/5 text-brand-indigo px-3 py-2 md:px-5 md:py-3 rounded-xl text-base md:text-xl font-black whitespace-nowrap">{res.total}</span>
-                  </div>
-                  <p className="text-sm md:text-base text-slate-500 font-medium mb-6 leading-relaxed">{res.desc}</p>
-
-                  <div className="mt-auto">
-                    <div className="flex justify-between text-[10px] md:text-xs text-slate-400 font-bold mb-1.5 md:mb-2 uppercase tracking-wider"><span>Бюджет тура</span></div>
-                    <div className="w-full h-1.5 md:h-2 bg-slate-100 rounded-full overflow-hidden flex mb-2.5 md:mb-3">
-                      <div className="h-full bg-brand-indigo" style={{ width: `${res.breakdown[0]}%` }}></div>
-                      <div className="h-full bg-brand-amber" style={{ width: `${res.breakdown[1]}%` }}></div>
-                      <div className="h-full bg-brand-sky" style={{ width: `${res.breakdown[2]}%` }}></div>
-                    </div>
-                    <div className="flex flex-wrap gap-x-3 md:gap-x-4 gap-y-1">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-indigo"></div>
-                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Дорога</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-amber"></div>
-                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Отель</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 md:w-2 md:h-2 rounded-full bg-brand-sky"></div>
-                        <span className="text-[8px] md:text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Досуг</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* FAQ */}
-        <div className="grid grid-cols-1 gap-8 md:gap-16 pt-6 md:pt-10 border-t border-slate-100">
-          <div className="text-center md:text-left mb-4 md:mb-0">
-            <h2 className="text-2xl font-black text-brand-indigo">Частые вопросы</h2>
-          </div>
-          {FAQ_CARDS.map((card, idx) => (
-            <div key={card.id} className={`flex flex-col md:flex-row bg-white rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-200/40 border border-slate-100 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
-              <div className="w-full md:w-1/3 h-56 md:h-80 relative overflow-hidden">
-                <img src={card.image} alt={card.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
-              </div>
-              <div className="w-full md:w-2/3 p-8 md:p-12 flex flex-col justify-center">
-                <h4 className="text-xl md:text-3xl font-black text-brand-indigo mb-4 leading-tight">{card.title}</h4>
-                <p className="text-slate-500 leading-relaxed text-sm md:text-lg font-medium">{card.desc}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

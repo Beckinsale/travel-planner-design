@@ -391,6 +391,56 @@ const LucideIcons = {
       <path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z" />
     </svg>
   ),
+  Sun: (props) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2" />
+      <path d="M12 20v2" />
+      <path d="m4.93 4.93 1.41 1.41" />
+      <path d="m17.66 17.66 1.41 1.41" />
+      <path d="M2 12h2" />
+      <path d="M20 12h2" />
+      <path d="m6.34 17.66-1.41 1.41" />
+      <path d="m19.07 4.93-1.41 1.41" />
+    </svg>
+  ),
+  Cloud: (props) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M17.5 19c2.5 0 3.5-1.5 3.5-3.5s-1.5-3.5-3.5-3.5c-.1 0-.2 0-.3 0a5 5 0 1 0-9.7 0s-.2 0-.3 0a3.5 3.5 0 1 0 0 7h10.3z" />
+    </svg>
+  ),
+  CloudRain: (props) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+      <path d="M16 14v6" />
+      <path d="M8 14v6" />
+      <path d="M12 16v6" />
+    </svg>
+  ),
   MessageSquare: (props) => (
     <svg
       {...props}
@@ -460,7 +510,7 @@ const LucideIcons = {
   ),
 };
 
-const Icon = ({ name, size = 20, className }) => {
+window.Icon = ({ name, size = 20, className }) => {
   const IconComponent = LucideIcons[name];
   if (!IconComponent) return null;
   return <IconComponent width={size} height={size} className={className} />;
