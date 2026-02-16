@@ -75,7 +75,7 @@ function PlannerPage({ onBack }) {
             </button>
             <button
               onClick={() => setActiveTab('popular')}
-              className={`flex-1 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'popular' ? 'bg-white text-brand-indigo shadow-md' : 'text-slate-400'}`}
+              className={`flex-1 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'popular' ? 'bg-white text-brand-indigo shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
             >
               Популярные
             </button>
@@ -85,27 +85,31 @@ function PlannerPage({ onBack }) {
         {activeTab === 'my' ? (
           /* КОНСТРУКТОР МАРШРУТА */
           <div className="animate-in fade-in duration-500">
-            <div className="mb-10 overflow-x-auto md:overflow-x-visible no-scrollbar -mx-4 px-4 md:mx-0 md:px-0">
-              <div className="flex md:grid md:grid-cols-5 gap-3 md:gap-4 min-w-max md:min-w-0 pb-2 pr-4 md:pr-0">
-                {categories.map((cat) => (
-                  <div
-                    key={cat.id}
-                    className="flex-1 flex items-center justify-between gap-1 p-2 md:p-1.5 px-3 md:px-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-brand-sky transition-all cursor-pointer group shrink-0 overflow-hidden w-[150px] md:w-auto"
-                  >
-                    <div className="flex items-center gap-1.5 md:gap-2 shrink-0 overflow-hidden">
-                      <div className="p-1.5 md:p-1.5 bg-slate-50 group-hover:bg-brand-sky/10 rounded-lg text-slate-500 group-hover:text-brand-sky transition-colors shrink-0">
-                        <Icon name={cat.icon} size={14} />
+            <div className="relative -mx-4 px-4 md:mx-0 md:px-0 mb-10">
+              <div className="overflow-x-auto md:overflow-x-visible no-scrollbar">
+                <div className="flex md:grid md:grid-cols-5 gap-3 md:gap-4 min-w-max md:min-w-0 pb-2 pr-4 md:pr-0">
+                  {categories.map((cat) => (
+                    <div
+                      key={cat.id}
+                      className="flex-1 flex items-center justify-between gap-1 p-2 md:p-1.5 px-3 md:px-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-brand-sky transition-all cursor-pointer group shrink-0 overflow-hidden w-[150px] md:w-auto"
+                    >
+                      <div className="flex items-center gap-1.5 md:gap-2 shrink-0 overflow-hidden">
+                        <div className="p-1.5 md:p-1.5 bg-slate-50 group-hover:bg-brand-sky/10 rounded-lg text-slate-500 group-hover:text-brand-sky transition-colors shrink-0">
+                          <Icon name={cat.icon} size={14} />
+                        </div>
+                        <span className="font-bold text-[13px] text-brand-indigo whitespace-nowrap truncate">
+                          {cat.label}
+                        </span>
                       </div>
-                      <span className="font-bold text-[13px] text-brand-indigo whitespace-nowrap truncate">
-                        {cat.label}
-                      </span>
+                      <div className="w-4 h-4 md:w-[18px] md:h-[18px] rounded-full bg-brand-sky text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
+                        <Icon name="Plus" size={10} className="shrink-0" />
+                      </div>
                     </div>
-                    <div className="w-4 h-4 md:w-[18px] md:h-[18px] rounded-full bg-brand-sky text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
-                      <Icon name="Plus" size={10} className="shrink-0" />
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                  <div className="w-12 shrink-0 md:hidden"></div>
+                </div>
               </div>
+              <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
             </div>
 
             <div className="mb-10 w-full">
@@ -117,7 +121,7 @@ function PlannerPage({ onBack }) {
                   <input
                     type="text"
                     placeholder="Поиск города или места..."
-                    className="w-full pl-11 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none shadow-sm focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-medium text-sm md:text-base placeholder:text-slate-400"
+                    className="w-full pl-11 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-medium text-sm md:text-base placeholder:text-slate-400"
                   />
                 </div>
                 <button className="w-full md:w-auto md:min-w-[150px] md:shrink-0 h-14 px-8 bg-brand-amber hover:bg-brand-amber/90 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-brand-amber/30 active:scale-95 transition-all text-sm md:text-base">
@@ -153,29 +157,33 @@ function PlannerPage({ onBack }) {
         ) : (
           /* СПИСОК ПОПУЛЯРНЫХ МАРШРУТОВ */
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 w-full mb-8">
-              <div className="relative group mb-6">
+            <div className="w-full mb-10">
+              <div className="relative group mb-8">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors"><Icon name="MapPin" size={20} /></div>
-                <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all" />
+                <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all placeholder:text-slate-400" />
               </div>
 
-              <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
-                {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
-                  <button
-                    key={f}
-                    onClick={() => setSelectedFilter(f)}
-                    className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
-                      selectedFilter === f 
-                        ? 'bg-brand-sky text-white border-brand-sky shadow-xl shadow-brand-sky/20' 
-                        : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
-                    }`}
-                  >
-                    {f === 'Активный' && <span className="text-sm">⚡</span>}
-                    {f === 'Пляж' && <span className="text-sm">🌴</span>}
-                    {f === 'Романтика' && <span className="text-sm">🎈</span>}
-                    {f}
-                  </button>
-                ))}
+              <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar md:overflow-visible md:flex-nowrap pb-2">
+                  {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
+                    <button
+                      key={f}
+                      onClick={() => setSelectedFilter(f)}
+                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
+                        selectedFilter === f 
+                          ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15' 
+                          : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
+                      }`}
+                    >
+                      {f === 'Активный' && <span className="text-sm">⚡</span>}
+                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
+                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                      {f}
+                    </button>
+                  ))}
+                  <div className="w-12 shrink-0 md:hidden"></div>
+                </div>
+                <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
               </div>
             </div>
 

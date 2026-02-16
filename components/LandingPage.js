@@ -242,23 +242,29 @@ function LandingPage({ scenario, setScenario, onStart }) {
               <h2 className="text-4xl md:text-7xl font-black text-brand-indigo tracking-tight">
                 Популярное <br /> <span className="text-brand-sky">сейчас</span>
               </h2>
-              <div className="flex gap-2 overflow-x-auto md:overflow-visible no-scrollbar pb-2 md:pb-0 md:flex-nowrap">
-                {['Все', 'Активный', 'Пляж', 'Романтика'].map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => setSelectedFilter(f)}
-                    className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none border-2 ${
-                      selectedFilter === f
-                        ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15'
-                        : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
-                    }`}
-                  >
-                    {f === 'Активный' && <span className="text-sm">⚡</span>}
-                    {f === 'Пляж' && <span className="text-sm">🌴</span>}
-                    {f === 'Романтика' && <span className="text-sm">🎈</span>}
-                    {f}
-                  </button>
-                ))}
+              <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
+                <div className="flex gap-2 overflow-x-auto md:overflow-visible no-scrollbar pb-2 md:pb-0 md:flex-nowrap">
+                  {['Все', 'Активный', 'Пляж', 'Романтика'].map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setSelectedFilter(f)}
+                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none border-2 ${
+                        selectedFilter === f
+                          ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15'
+                          : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
+                      }`}
+                    >
+                      {f === 'Активный' && <span className="text-sm">⚡</span>}
+                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
+                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                      {f}
+                    </button>
+                  ))}
+                  {/* Spacer for scroll indication */}
+                  <div className="w-12 shrink-0 md:hidden"></div>
+                </div>
+                {/* Gradient Fade Overlay */}
+                <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
               </div>
             </div>
 

@@ -244,17 +244,21 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
 
             <div className="bg-white border-t border-slate-100 shrink-0 sticky bottom-[50px] md:bottom-0 md:static z-20 w-full">
               <div className="absolute top-full left-0 right-0 h-20 bg-white md:hidden -z-10" />
-              <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white w-full border-b border-slate-50">
-                {QUICK_ACTIONS.map((action, idx) => (
-                  <button 
-                    key={idx} 
-                    onClick={() => handleSend(action.query)} 
-                    className="flex items-center gap-2 px-5 py-2.5 md:px-4 md:py-2 bg-white border border-slate-100 hover:border-brand-sky/30 hover:bg-slate-50 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0 md:shrink"
-                  >
-                    <span className="text-base md:text-base">{action.icon}</span>
-                    <span className="text-xs md:text-[13px] font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
-                  </button>
-                ))}
+              <div className="relative">
+                <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar px-4 py-4 md:px-8 bg-white w-full border-b border-slate-50">
+                  {QUICK_ACTIONS.map((action, idx) => (
+                    <button 
+                      key={idx} 
+                      onClick={() => handleSend(action.query)} 
+                      className="flex items-center gap-2 px-5 py-2.5 md:px-4 md:py-2 bg-white border border-slate-100 hover:border-brand-sky/30 hover:bg-slate-50 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0 md:shrink"
+                    >
+                      <span className="text-base md:text-base">{action.icon}</span>
+                      <span className="text-xs md:text-[13px] font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">{action.label}</span>
+                    </button>
+                  ))}
+                  <div className="w-12 shrink-0 md:hidden"></div>
+                </div>
+                <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
               </div>
               <div className="p-4 md:p-8 w-full bg-white">
                 <div className="max-w-4xl mx-auto relative flex items-center w-full">
