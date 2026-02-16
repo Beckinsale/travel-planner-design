@@ -128,6 +128,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
             loop
             muted
             playsInline
+            preload="auto"
             onEnded={(e) => e.target.play()}
             className="w-full h-full object-cover"
             poster="./assets/video/hero-poster.jpg"
