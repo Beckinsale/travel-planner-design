@@ -187,7 +187,7 @@ function PlannerPage({ onBack }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 pb-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 pb-32">
               {POPULAR_TOURS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res, i) => (
                 <div key={i} className="group cursor-pointer">
                   <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
