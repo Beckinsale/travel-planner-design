@@ -12,21 +12,25 @@ function LoginModal({ onClose, onLogin }) {
 
   // Блокировка скролла под модальным окном
   React.useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = originalStyle;
     };
   }, []);
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 text-left">
-      <div className="absolute inset-0 bg-brand-indigo/40 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="absolute inset-0 bg-brand-indigo/40 backdrop-blur-sm touch-none" onClick={onClose}></div>
+      <div 
+        className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden flex flex-col max-h-[90vh] overscroll-contain"
+        style={{ overscrollBehavior: 'contain' }}
+      >
         <button onClick={onClose} className="absolute top-6 right-6 text-slate-400 hover:text-brand-indigo p-2 hover:bg-slate-50 rounded-full z-20">
           <Icon name="Plus" size={24} className="rotate-45" />
         </button>
         
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-8 md:p-10 pt-12">
+        <div className="flex-1 overflow-y-auto no-scrollbar p-8 md:p-10 pt-12">
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-brand-sky rounded-[2rem] shadow-lg flex items-center justify-center text-white mx-auto mb-6 border-4 border-white">
               <Icon name="User" size={40} />

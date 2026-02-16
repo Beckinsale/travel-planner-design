@@ -26,37 +26,46 @@ function LandingPage({ scenario, setScenario, onStart }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Максимально агрессивный запуск видео для Opera Mobile
+  // Максимально устойчивый запуск видео для Opera Mobile
   React.useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const startVideo = () => {
-      video.muted = true;
-      video.play().then(() => {
-        setIsVideoLoaded(true);
-        cleanup();
-      }).catch(() => {
-        // Если заблокировано, ждем любого взаимодействия
-      });
+    // Явно задаем свойства через JS до начала попыток воспроизведения
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', ''); // Дублируем для верности в атрибуты DOM
+
+    const handlePlay = () => {
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise.then(() => {
+          setIsVideoLoaded(true);
+          cleanup();
+        }).catch(() => {
+          // Автозапуск заблокирован — ждем действий пользователя
+        });
+      }
     };
 
     const cleanup = () => {
-      window.removeEventListener('touchstart', startVideo);
-      window.removeEventListener('mousedown', startVideo);
-      window.removeEventListener('scroll', startVideo);
-      window.removeEventListener('keydown', startVideo);
+      ['touchstart', 'mousedown', 'scroll', 'click', 'keydown'].forEach(event => {
+        window.removeEventListener(event, handlePlay);
+      });
     };
 
     // 1. Пытаемся запустить сразу
-    video.load(); 
-    startVideo();
+    handlePlay();
 
-    // 2. Подписываемся на все возможные жесты
-    window.addEventListener('touchstart', startVideo, { passive: true });
-    window.addEventListener('mousedown', startVideo, { passive: true });
-    window.addEventListener('scroll', startVideo, { passive: true });
-    window.addEventListener('keydown', startVideo, { passive: true });
+    // 2. Слушаем все возможные жесты
+    ['touchstart', 'mousedown', 'scroll', 'click', 'keydown'].forEach(event => {
+      window.addEventListener(event, handlePlay, { passive: true });
+    });
+
+    // 3. Дополнительный триггер при смене видимости (вход во вкладку)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') handlePlay();
+    });
 
     return cleanup;
   }, [isDesktop]);
@@ -165,6 +174,9 @@ function LandingPage({ scenario, setScenario, onStart }) {
             muted
             playsInline
             preload="auto"
+            onCanPlay={() => {
+              if (videoRef.current) videoRef.current.play();
+            }}
             onEnded={(e) => e.target.play()}
             className="w-full h-full object-cover"
             poster="./assets/video/hero-poster.jpg"
@@ -282,7 +294,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
                     <button
                       key={f}
                       onClick={() => setSelectedFilter(f)}
-                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 md:shrink-0 active:scale-95 select-none outline-none border-2 ${
+                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
                         selectedFilter === f
                           ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15'
                           : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
