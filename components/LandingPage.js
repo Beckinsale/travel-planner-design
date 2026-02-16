@@ -2,6 +2,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
   const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
+  const videoRef = React.useRef(null);
 
   // Адаптивное количество строк для поиска (Mobile First logic)
   const [inputRows, setInputRows] = React.useState(3);
@@ -24,6 +25,15 @@ function LandingPage({ scenario, setScenario, onStart }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Принудительный запуск видео для Opera/Mobile
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.log("Autoplay blocked, showing poster:", error);
+      });
+    }
+  }, [isDesktop]);
 
   const handleSearch = (query, target) => {
     onStart(query || searchQuery, target || 'chat');
@@ -123,6 +133,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
             style={{ backgroundImage: 'url(./assets/video/hero-poster.jpg)' }}
           ></div>
           <video
+            ref={videoRef}
             key={isDesktop ? 'hd' : 'sd'}
             autoPlay
             loop
