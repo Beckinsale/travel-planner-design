@@ -70,7 +70,6 @@ function LoginModal({ onClose, onLogin }) {
 function Sidebar({ activeView, activeTab, onViewChange }) {
   const menuItems = [
     { id: 'chat', icon: 'MessageSquare', label: 'Чат', view: 'ai-assistant', tab: 'chat' },
-    { id: 'popular', icon: 'Flame', label: 'Популярно', view: 'ai-assistant', tab: 'routes' },
     { id: 'planner', icon: 'Sliders', label: 'Маршрут', view: 'planner' },
     { id: 'profile', icon: 'User', label: 'Профиль', view: 'profile' },
   ];
@@ -92,15 +91,15 @@ function Sidebar({ activeView, activeTab, onViewChange }) {
 
 function MobileNav({ activeView, activeTab, onViewChange }) {
   const menuItems = [
-    { id: 'chat', icon: 'MessageSquare', label: 'Чат', view: 'ai-assistant', tab: 'chat' },
-    { id: 'popular', icon: 'Flame', label: 'Популярно', view: 'ai-assistant', tab: 'routes' },
+    { id: 'home', icon: 'Home', label: 'Главная', view: 'landing' },
+    { id: 'ai', icon: 'MessageSquare', label: 'AI Гид', view: 'ai-assistant', tab: 'chat' },
     { id: 'planner', icon: 'Sliders', label: 'Маршрут', view: 'planner' },
     { id: 'profile', icon: 'User', label: 'Профиль', view: 'profile' },
   ];
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-100 px-6 pt-2 pb-6 flex justify-between items-center z-[100] pb-[calc(env(safe-area-inset-bottom)+12px)] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] w-full">
       {menuItems.map((item) => {
-        const isActive = activeView === item.view && (item.tab ? activeTab === item.tab : true);
+        const isActive = activeView === item.view;
         return (
           <button key={item.id} onClick={() => onViewChange(item.view, item.tab)} className={`flex flex-col items-center gap-1 transition-all active:scale-90 flex-1 ${isActive ? 'text-brand-sky' : 'text-slate-400'}`}>
             <Icon name={item.icon} size={24} />

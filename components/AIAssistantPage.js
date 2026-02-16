@@ -1,5 +1,4 @@
 function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActiveTab, user }) {
-  const [selectedFilter, setSelectedFilter] = React.useState('Все');
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [isTyping, setIsTyping] = React.useState(false);
   const [inputText, setInputText] = React.useState('');
@@ -20,7 +19,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       total: '45 000 ₽',
       img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
       tags: ['⚡ Активный', 'РФ'],
-      breakdown: [30, 50, 20],
       routeCount: '1.2к',
       temp: '+12°',
       weatherIcon: 'CloudSun',
@@ -32,7 +30,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       total: '85 000 ₽',
       img: 'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=800',
       tags: ['⚡ Активный', 'ОАЭ'],
-      breakdown: [40, 35, 25],
       routeCount: '4.2к',
       temp: '+32°',
       weatherIcon: 'Sun',
@@ -44,7 +41,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       total: '125 000 ₽',
       img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
       tags: ['🌴 Пляж', 'Мальдивы'],
-      breakdown: [30, 55, 15],
       routeCount: '1.8к',
       temp: '+29°',
       weatherIcon: 'Sun',
@@ -56,7 +52,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
       total: '65 000 ₽',
       img: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=2000&auto=format&fit=crop',
       tags: ['🎈 Романтика', 'Турция'],
-      breakdown: [35, 40, 25],
       routeCount: '2.5к',
       temp: '+18°',
       weatherIcon: 'Cloud',
@@ -145,12 +140,9 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
 
       <div className="flex-1 flex flex-col relative w-full max-w-full min-w-0">
         <div className="flex-1 flex w-full max-w-full min-w-0">
-          <div className={`flex flex-col bg-white flex-1 transition-all w-full max-w-full min-w-0 ${activeTab === 'chat' ? 'flex' : 'hidden'}`}>
+          <div className="flex flex-col bg-white flex-1 transition-all w-full max-w-full min-w-0">
             <div className="px-4 py-4 md:pt-10 md:pb-6 border-b border-slate-100 flex items-center justify-between bg-white shrink-0 z-10 w-full">
               <div className="flex items-center gap-3">
-                <button onClick={onBack} className="md:hidden p-2 -ml-2 text-slate-400">
-                  <Icon name="ArrowLeft" size={24} />
-                </button>
                 <div className="w-11 h-11 md:w-14 md:h-14 rounded-full overflow-hidden shrink-0 border-2 border-brand-sky/20 p-0.5 shadow-sm">
                   <img src={aiAvatarUrl} className="w-full h-full object-cover rounded-full" />
                 </div>
@@ -193,15 +185,12 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
                               alt={msg.tour.title}
                             />
-                            {/* Layla-style enhanced gradient underlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
-
                             <div className="absolute top-6 left-6">
                               <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
                                 <Icon name={msg.tour.weatherIcon} size={14} /> {msg.tour.temp}
                               </div>
                             </div>
-
                             <div className="absolute bottom-8 left-8 right-8 text-left">
                               <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
                                 {msg.tour.title}
@@ -250,7 +239,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                   </div>
                 </div>
               )}
-
               <div ref={lastMsgRef} className="h-4" />
             </div>
 
@@ -276,79 +264,6 @@ function AIAssistantPage({ onBack, onProfile, initialQuery, activeTab, setActive
                     <button onClick={() => handleSend()} className="p-3 bg-brand-sky text-white rounded-2xl hover:bg-brand-sky/90 transition-all shadow-lg active:scale-90"><Icon name="Send" size={24} /></button>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={`flex-1 bg-slate-50/50 overflow-y-auto custom-scrollbar transition-all ${activeTab === 'routes' ? 'block' : 'hidden'}`}>
-            <div className="p-4 md:p-10 w-full max-w-5xl mx-auto">
-              <div className="mb-8 bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 w-full">
-                <h3 className="text-xl md:text-2xl font-black text-brand-indigo mb-6 flex items-center gap-2">Популярные маршруты</h3>
-                <div className="relative group mb-6">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors"><Icon name="MapPin" size={20} /></div>
-                  <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all" />
-                </div>
-
-                <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-2 px-2">
-                  {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
-                    <button
-                      key={f}
-                      onClick={() => setSelectedFilter(f)}
-                      className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
-                        selectedFilter === f 
-                          ? 'bg-brand-sky text-white border-brand-sky shadow-xl shadow-brand-sky/20' 
-                          : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
-                      }`}
-                    >
-                      {f === 'Активный' && <span className="text-sm">⚡</span>}
-                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
-                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
-                      {f}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 pb-24 md:pb-10">
-                {ALL_TOURS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res, i) => (
-                  <div
-                    key={i}
-                    onClick={() => handleSearch(res.title)}
-                    className="group cursor-pointer"
-                  >
-                    <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
-                      <img
-                        src={res.img}
-                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
-                        alt={res.title}
-                      />
-                      {/* Layla-style enhanced gradient underlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
-
-                      <div className="absolute top-6 left-6">
-                        <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
-                          <Icon name={res.weatherIcon} size={14} /> {res.temp}
-                        </div>
-                      </div>
-
-                      <div className="absolute bottom-8 left-8 right-8 text-left">
-                        <h3 className="text-3xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
-                          {res.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
-                          <Icon name="MapPin" size={14} />
-                          <span>{res.routeCount} маршрутов</span>
-                        </div>
-                        <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
-                          {res.total}
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-slate-500 text-lg font-medium leading-relaxed px-4 text-left">
-                      {res.desc}
-                    </p>
-                  </div>
-                ))}
               </div>
             </div>
           </div>

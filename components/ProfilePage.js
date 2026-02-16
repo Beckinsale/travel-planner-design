@@ -96,17 +96,10 @@ function ProfilePage({ onBack, onChat, user, setUser }) {
               <h1 className="text-xl font-black text-brand-indigo">
                 Мой профиль
               </h1>
-
-              <button
-                onClick={onBack}
-                className="text-rose-500 hover:text-rose-600 flex items-center gap-1 text-sm font-bold transition-colors"
-              >
-                Выход
-              </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col">
+          <div className="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col pb-28 md:pb-10">
             <div className="flex flex-col items-center md:items-start mb-10">
               <div 
                 onClick={handleAvatarClick}
