@@ -26,13 +26,39 @@ function LandingPage({ scenario, setScenario, onStart }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Принудительный запуск видео для Opera/Mobile
+  // Максимально агрессивный запуск видео для Opera Mobile
   React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.log("Autoplay blocked, showing poster:", error);
+    const video = videoRef.current;
+    if (!video) return;
+
+    const startVideo = () => {
+      video.muted = true;
+      video.play().then(() => {
+        setIsVideoLoaded(true);
+        cleanup();
+      }).catch(() => {
+        // Если заблокировано, ждем любого взаимодействия
       });
-    }
+    };
+
+    const cleanup = () => {
+      window.removeEventListener('touchstart', startVideo);
+      window.removeEventListener('mousedown', startVideo);
+      window.removeEventListener('scroll', startVideo);
+      window.removeEventListener('keydown', startVideo);
+    };
+
+    // 1. Пытаемся запустить сразу
+    video.load(); 
+    startVideo();
+
+    // 2. Подписываемся на все возможные жесты
+    window.addEventListener('touchstart', startVideo, { passive: true });
+    window.addEventListener('mousedown', startVideo, { passive: true });
+    window.addEventListener('scroll', startVideo, { passive: true });
+    window.addEventListener('keydown', startVideo, { passive: true });
+
+    return cleanup;
   }, [isDesktop]);
 
   const handleSearch = (query, target) => {
@@ -127,7 +153,6 @@ function LandingPage({ scenario, setScenario, onStart }) {
       <div className="relative h-[95vh] md:h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Background Layer */}
         <div className="absolute inset-0 z-0">
-          {/* Static Image Fallback (Replaces Gradient) */}
           <div 
             className="absolute inset-0 bg-cover bg-center z-[-1]" 
             style={{ backgroundImage: 'url(./assets/video/hero-poster.jpg)' }}
@@ -156,11 +181,8 @@ function LandingPage({ scenario, setScenario, onStart }) {
               </>
             )}
           </video>
-          {/* Multi-layered Overlays */}
-          <div className="absolute inset-0 bg-black/10"></div>{' '}
-          {/* Легкое общее затемнение */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent"></div>{' '}
-          {/* Затемнение только сверху */}
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent"></div>
         </div>
 
         {/* Content Layer */}
@@ -255,7 +277,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
                 Популярное <br /> <span className="text-brand-sky">сейчас</span>
               </h2>
               <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
-                <div className="flex gap-2 overflow-x-auto md:overflow-visible no-scrollbar pb-2 md:pb-0 md:flex-nowrap">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar md:overflow-visible md:flex-nowrap pb-2">
                   {['Все', 'Активный', 'Пляж', 'Романтика'].map((f) => (
                     <button
                       key={f}
@@ -272,10 +294,8 @@ function LandingPage({ scenario, setScenario, onStart }) {
                       {f}
                     </button>
                   ))}
-                  {/* Spacer for scroll indication */}
                   <div className="w-12 shrink-0 md:hidden"></div>
                 </div>
-                {/* Gradient Fade Overlay */}
                 <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
               </div>
             </div>
@@ -305,7 +325,6 @@ function LandingPage({ scenario, setScenario, onStart }) {
                         <Icon name={res.weatherIcon} size={14} /> {res.temp}
                       </div>
                     </div>
-
                     <div className="absolute bottom-10 left-10 right-10 text-left">
                       <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-tight drop-shadow-2xl">
                         {res.title}
