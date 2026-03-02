@@ -1,4 +1,4 @@
-function LandingPage({ scenario, setScenario, onStart }) {
+function LandingPage({ scenario, setScenario, onStart, onTourSelect }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
   const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
@@ -89,39 +89,39 @@ function LandingPage({ scenario, setScenario, onStart }) {
     },
     {
       id: 2,
-      title: 'ОАЭ: Дубай',
-      desc: 'Футуристичные небоскребы и сафари в золотых песках.',
-      total: '85 000 ₽',
-      img: 'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['⚡ Активный', 'ОАЭ'],
+      title: 'Алтай: Золотые Горы',
+      desc: 'Дикая природа, бирюзовая Катунь и бескрайние степи.',
+      total: '55 000 ₽',
+      img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⚡ Активный', 'РФ'],
       breakdown: [40, 35, 25],
-      routeCount: '4.2к',
-      temp: '+32°',
+      routeCount: '2.8к',
+      temp: '+8°',
       weatherIcon: 'Sun',
     },
     {
       id: 3,
-      title: 'Мальдивы: Рай',
-      desc: 'Райский отдых на воде с видом на бескрайний океан.',
-      total: '125 000 ₽',
-      img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
-      tags: ['🌴 Пляж', 'Мальдивы'],
+      title: 'Байкал: Ледяная Сказка',
+      desc: 'Самое глубокое озеро планеты с чистейшим прозрачным льдом.',
+      total: '65 000 ₽',
+      img: 'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['❄️ Зима', 'РФ'],
       breakdown: [30, 55, 15],
-      routeCount: '1.8к',
-      temp: '+29°',
-      weatherIcon: 'Sun',
+      routeCount: '3.1к',
+      temp: '-15°',
+      weatherIcon: 'Cloud',
     },
     {
       id: 4,
-      title: 'Турция: Каппадокия',
-      desc: 'Полет на шарах над долиной сказочных дымоходов.',
-      total: '65 000 ₽',
-      img: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=2000&auto=format&fit=crop',
-      tags: ['🎈 Романтика', 'Турция'],
+      title: 'Камчатка: Вулканы',
+      desc: 'Путешествие на край света к огнедышащим горам и океану.',
+      total: '115 000 ₽',
+      img: 'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⛰️ Экстрим', 'РФ'],
       breakdown: [35, 40, 25],
-      routeCount: '2.5к',
-      temp: '+18°',
-      weatherIcon: 'Cloud',
+      routeCount: '1.5к',
+      temp: '+5°',
+      weatherIcon: 'Wind',
     },
   ];
 
@@ -132,29 +132,29 @@ function LandingPage({ scenario, setScenario, onStart }) {
     { icon: '⚡', label: 'Лучшее из недорогих', query: 'Бюджетно' },
   ];
 
-  const FAQ_CARDS = [
-    {
-      id: 1,
-      title: 'Как работает сервис?',
-      desc: 'Просто напишите свои пожелания. Наша система проанализирует тысячи вариантов и соберет идеальный маршрут под ваш бюджет.',
-      image:
-        'https://images.unsplash.com/photo-1524850011238-e3d235c7d4c9?q=80&w=2064&auto=format&fit=crop',
-    },
-    {
-      id: 2,
-      title: 'Откуда статистика?',
-      desc: 'Показатели созданных маршрутов и экономии бюджета рассчитываются на данных, полученных за последние 6 месяцев.',
-      image:
-        'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2026&auto=format&fit=crop',
-    },
-    {
-      id: 3,
-      title: 'А билеты настоящие?',
-      desc: 'Да, мы ищем реальные рейсы и отели. В конце вы получите ссылки на бронирование.',
-      image:
-        'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?q=80&w=2070&auto=format&fit=crop',
-    },
-  ];
+    const FAQ_CARDS = [
+      {
+        id: 1,
+        title: 'Как работает сервис?',
+              desc: 'Наш алгоритм анализирует ваши предпочтения и подбирает оптимальные локации в РФ. Мы убрали всё лишнее, чтобы вы не тратили часы на изучение форумов и отзывов.',
+        image:
+          'https://images.unsplash.com/photo-1524850011238-e3d235c7d4c9?q=80&w=2064&auto=format&fit=crop',
+      },
+      {
+        id: 2,
+        title: 'Используются реальные данные?',
+        desc: 'Используются реальные агрегированные данные и AI-моделирование бюджета.',
+        image:
+          'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2026&auto=format&fit=crop',
+      },
+      {
+        id: 3,
+        title: 'Можно ли редактировать маршрут?',
+        desc: 'Можно добавлять и удалять точки, изменять бюджет и настраивать маршрут под себя.',
+        image:
+          'https://images.unsplash.com/photo-1503220317375-aaad61436b1b?q=80&w=2070&auto=format&fit=crop',
+      },
+    ];
 
   return (
     <div className="relative flex flex-col min-h-full bg-white">
@@ -255,45 +255,31 @@ function LandingPage({ scenario, setScenario, onStart }) {
       {/* 2. MAIN CONTENT (Smooth transition from hero) */}
       <div className="relative z-20 bg-white">
         <div className="max-w-5xl mx-auto px-4 md:px-6 py-24 w-full">
-          {/* STATISTICS GRID */}
-          <div className="flex flex-wrap justify-center gap-x-12 gap-y-10 mb-32">
-            <div className="text-center">
-              <div className="text-4xl md:text-6xl font-black text-brand-indigo mb-2">
-                14k+
-              </div>
-              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
-                Маршрутов
-              </div>
-            </div>
-            <div className="w-px h-16 bg-slate-100 hidden md:block"></div>
-            <div className="text-center">
-              <div className="text-4xl md:text-6xl font-black text-emerald-500 mb-2">
-                15%
-              </div>
-              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
-                Экономия
-              </div>
-            </div>
-            <div className="w-px h-16 bg-slate-100 hidden md:block"></div>
-            <div className="text-center">
-              <div className="text-4xl md:text-6xl font-black text-brand-amber mb-2">
-                24/7
-              </div>
-              <div className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-widest">
-                В любое время
-              </div>
-            </div>
-          </div>
+                    <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16 text-center mb-32">
+                        <div className="flex flex-col items-center">
+                          <h3 className="text-4xl md:text-5xl font-black text-brand-indigo tracking-tighter">AI</h3>
+                          <p className="text-xs text-slate-400 uppercase font-bold tracking-widest mt-2">Генерация за секунды</p>
+                        </div>
+                        <div className="w-px h-12 bg-slate-200 hidden md:block"></div>
+                        <div className="flex flex-col items-center">
+                          <h3 className="text-4xl md:text-5xl font-black text-emerald-500 tracking-tighter">100%</h3>
+                          <p className="text-xs text-slate-400 uppercase font-bold tracking-widest mt-2">Редактируемый маршрут</p>
+                        </div>
+                        <div className="w-px h-12 bg-slate-200 hidden md:block"></div>
+                        <div className="flex flex-col items-center">
+                          <h3 className="text-4xl md:text-5xl font-black text-brand-amber tracking-tighter">24/7</h3>
+                          <p className="text-xs text-slate-400 uppercase font-bold tracking-widest mt-2">В любое время</p>
+                        </div>
+                      </div>
 
-          {/* POPULAR DESTINATIONS */}
-          <div className="mb-32">
+                    <div className="mb-32">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
               <h2 className="text-4xl md:text-7xl font-black text-brand-indigo tracking-tight">
                 Популярное <br /> <span className="text-brand-sky">сейчас</span>
               </h2>
               <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar md:overflow-visible md:flex-nowrap pb-2">
-                  {['Все', 'Активный', 'Пляж', 'Романтика'].map((f) => (
+                  {['Все', 'Активный', 'Зима', 'Экстрим'].map((f) => (
                     <button
                       key={f}
                       onClick={() => setSelectedFilter(f)}
@@ -304,8 +290,8 @@ function LandingPage({ scenario, setScenario, onStart }) {
                       }`}
                     >
                       {f === 'Активный' && <span className="text-sm">⚡</span>}
-                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
-                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                      {f === 'Зима' && <span className="text-sm">❄️</span>}
+                      {f === 'Экстрим' && <span className="text-sm">⛰️</span>}
                       {f}
                     </button>
                   ))}
@@ -323,7 +309,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
               ).map((res) => (
                 <div
                   key={res.id}
-                  onClick={() => handleSearch(res.title, 'routes')}
+                  onClick={() => onTourSelect(res)}
                   className="group cursor-pointer"
                 >
                   <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-8 shadow-2xl isolation-auto">
@@ -356,10 +342,8 @@ function LandingPage({ scenario, setScenario, onStart }) {
                                           </h3>
 
                     
-                      <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
-                        <Icon name="MapPin" size={14} />
-                        <span>{res.routeCount} маршрутов</span>
-                      </div>
+                                            <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                                            </div>
                       <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
                         {res.total}
                       </div>
@@ -373,8 +357,7 @@ function LandingPage({ scenario, setScenario, onStart }) {
             </div>
           </div>
 
-          {/* FAQ ZIGZAG */}
-          <div className="pt-12 md:pt-24">
+                              <div className="pt-0">
             <h2 className="text-4xl md:text-7xl font-black text-brand-indigo mb-10 md:mb-20 tracking-tight">
               Ответы <br /> <span className="text-brand-sky">на вопросы</span>
             </h2>

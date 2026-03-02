@@ -38,36 +38,36 @@ function AIAssistantPage({
     },
     {
       id: 2,
-      title: 'ОАЭ: Дубай',
-      desc: 'Футуристичные небоскребы и сафари в золотых песках.',
-      total: '85 000 ₽',
-      img: 'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['⚡ Активный', 'ОАЭ'],
-      routeCount: '4.2к',
-      temp: '+32°',
+      title: 'Алтай: Золотые Горы',
+      desc: 'Дикая природа, бирюзовая Катунь и бескрайние степи.',
+      total: '55 000 ₽',
+      img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⚡ Активный', 'РФ'],
+      routeCount: '2.8к',
+      temp: '+8°',
       weatherIcon: 'Sun',
     },
     {
       id: 3,
-      title: 'Мальдивы: Рай',
-      desc: 'Райский отдых на воде с видом на бескрайний океан.',
-      total: '125 000 ₽',
-      img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
-      tags: ['🌴 Пляж', 'Мальдивы'],
-      routeCount: '1.8к',
-      temp: '+29°',
-      weatherIcon: 'Sun',
+      title: 'Байкал: Ледяная Сказка',
+      desc: 'Самое глубокое озеро планеты с чистейшим прозрачным льдом.',
+      total: '65 000 ₽',
+      img: 'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['❄️ Зима', 'РФ'],
+      routeCount: '3.1к',
+      temp: '-15°',
+      weatherIcon: 'Cloud',
     },
     {
       id: 4,
-      title: 'Турция: Каппадокия',
-      desc: 'Полет на шарах над долиной сказочных дымоходов.',
-      total: '65 000 ₽',
-      img: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=2000&auto=format&fit=crop',
-      tags: ['🎈 Романтика', 'Турция'],
-      routeCount: '2.5к',
-      temp: '+18°',
-      weatherIcon: 'Cloud',
+      title: 'Камчатка: Вулканы',
+      desc: 'Путешествие на край света к огнедышащим горам и океану.',
+      total: '115 000 ₽',
+      img: 'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⛰️ Экстрим', 'РФ'],
+      routeCount: '1.5к',
+      temp: '+5°',
+      weatherIcon: 'Wind',
     },
   ];
 
@@ -81,30 +81,30 @@ function AIAssistantPage({
 
   const QUICK_ACTIONS = [
     {
-      icon: '🗺️',
-      label: 'Маршрут',
-      query: 'Составь маршрут в Турцию на 7 дней',
+      icon: '🏔️',
+      label: 'Алтай',
+      query: 'Составь маршрут по Алтаю на 7 дней',
     },
     {
       icon: '💰',
       label: 'Бюджет',
-      query: 'Какой бюджет нужен для поездки на Алтай?',
+      query: 'Какой бюджет нужен для поездки на Байкал?',
     },
     {
       icon: '🔥',
-      label: 'Хиты',
-      query: 'Какие направления сейчас самые популярные?',
+      label: 'Хиты РФ',
+      query: 'Какие направления в России сейчас самые популярные?',
     },
     {
-      icon: '🌊',
-      label: 'Море',
-      query: 'Найди лучшие варианты для отдыха на море',
+      icon: '❄️',
+      label: 'Байкал',
+      query: 'Что посмотреть на Байкале зимой?',
     },
-    { icon: '🏔️', label: 'Горы', query: 'Хочу в горы, что посоветуешь?' },
+    { icon: '🌋', label: 'Камчатка', query: 'Хочу на Камчатку, с чего начать?' },
     {
       icon: '📸',
       label: 'Места',
-      query: 'Главные достопримечательности в Дубае',
+      query: 'Главные достопримечательности в Сочи',
     },
   ];
 
@@ -163,8 +163,9 @@ function AIAssistantPage({
     scrollToBottom('smooth');
   }, [messages, isTyping]);
 
+  // const aiAvatarUrl = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2000&auto=format&fit=crop';
   const aiAvatarUrl =
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop';
+    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1974&auto=format&fit=crop';
 
   return (
     <div className="flex flex-col h-screen md:h-full bg-white relative w-full max-w-full overflow-hidden">
@@ -261,10 +262,8 @@ function AIAssistantPage({
                           {msg.tour.title}
                         </h3>
 
-                        <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
-                          <Icon name="MapPin" size={14} />
-                          <span>{msg.tour.routeCount} маршрутов</span>
-                        </div>
+                                                <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                                                </div>
                         <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
                           {msg.tour.total}
                         </div>

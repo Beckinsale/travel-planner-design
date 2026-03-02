@@ -1,6 +1,333 @@
-function PlannerPage({ onBack }) {
+function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
   const [activeTab, setActiveTab] = React.useState('my');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
+  const mapRef = React.useRef(null);
+  const [searchInput, setSearchInput] = React.useState('');
+  const [isSearching, setIsSearching] = React.useState(false);
+  const [showOptions, setShowOptions] = React.useState(false);
+  const [searchResults, setSearchResults] = React.useState([]);
+  const [plannedBudget, setPlannedBudget] = React.useState(editingRoute ? editingRoute.budget : 0);
+  const searchContainerRef = React.useRef(null);
+  const [editingPointId, setEditingPointId] = React.useState(null);
+  const [editingTitle, setEditingTitle] = React.useState('');
+  const [isActiveRoute, setIsActiveRoute] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.addEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleDeletePoint = (id) => {
+    setRoutePoints((prev) => prev.filter((point) => point.id !== id));
+  };
+
+  const handleEditPoint = (id, currentTitle) => {
+    setEditingPointId(id);
+    setEditingTitle(currentTitle);
+  };
+
+  const handleSaveEdit = (id) => {
+    const titleToSave = editingTitle;
+    setRoutePoints((prev) =>
+      prev.map((point) =>
+        point.id === id
+          ? { ...point, title: titleToSave || point.title }
+          : point,
+      ),
+    );
+    setEditingPointId(null);
+
+    // При сохранении имени предлагаем обновить координаты
+    if (titleToSave && window.ymaps) {
+      window.ymaps.ready(() => {
+        window.ymaps.geocode(titleToSave).then((res) => {
+          const firstGeoObject = res.geoObjects.get(0);
+          if (firstGeoObject) {
+            const coords = firstGeoObject.geometry.getCoordinates();
+            setRoutePoints((prev) =>
+              prev.map((p) => (p.id === id ? { ...p, coords: coords } : p)),
+            );
+          }
+        });
+      });
+    }
+  };
+
+  // Добавим стейт для точек с бюджетом
+  const [routePoints, setRoutePoints] = React.useState(editingRoute ? editingRoute.points : []);
+
+  const totalBudget = React.useMemo(
+    () => routePoints.reduce((sum, p) => sum + p.budget, 0),
+    [routePoints],
+  );
+
+  const handleSearchInput = (e) => {
+    const val = e.target.value;
+    setSearchInput(val);
+
+    if (val.length > 2) {
+      // Тестовые данные для отображения выпадающего списка
+      setSearchResults([
+        { displayName: `${val} - Центр`, value: `${val} - Центр` },
+        { displayName: `${val} - Отель Плаза`, value: `${val} - Отель Плаза` },
+        { displayName: `${val} - Аэропорт`, value: `${val} - Аэропорт` },
+      ]);
+      setShowOptions(true);
+    } else {
+      setSearchResults([]);
+      setShowOptions(false);
+    }
+  };
+
+  const handleAddLocation = (item) => {
+    // В API 2.1 suggest возвращает объекты с полями { value, displayName, hl }
+    const title =
+      typeof item === 'string' ? item : item.value || item.displayName;
+    if (!title || !title.trim()) return;
+
+    setIsSearching(true);
+    setShowOptions(false);
+
+    if (window.ymaps) {
+      window.ymaps.ready(() => {
+        // Выполняем геокодирование для получения точных координат
+        window.ymaps
+          .geocode(title)
+          .then((res) => {
+            const firstGeoObject = res.geoObjects.get(0);
+            const coords = firstGeoObject
+              ? firstGeoObject.geometry.getCoordinates()
+              : [55.751574, 37.573856];
+
+            const newPoint = {
+              id: Date.now(),
+              title: title,
+              coords: coords,
+              budget: 0,
+              date: new Date().toISOString().split('T')[0],
+            };
+
+            setRoutePoints((prev) => [...prev, newPoint]);
+            setSearchInput('');
+            setIsSearching(false);
+          })
+          .catch(() => {
+            const randomOffsetLat = (Math.random() - 0.5) * 0.1;
+            const randomOffsetLon = (Math.random() - 0.5) * 0.1;
+            const newPoint = {
+              id: Date.now(),
+              title: title,
+              coords: [
+                55.751574 + randomOffsetLat,
+                37.573856 + randomOffsetLon,
+              ],
+              budget: 0,
+            };
+            setRoutePoints((prev) => [...prev, newPoint]);
+            setSearchInput('');
+            setIsSearching(false);
+          });
+      });
+    } else {
+      // Фоллбек
+      const randomOffsetLat = (Math.random() - 0.5) * 0.1;
+      const randomOffsetLon = (Math.random() - 0.5) * 0.1;
+      const newPoint = {
+        id: Date.now(),
+        title: title,
+        coords: [55.751574 + randomOffsetLat, 37.573856 + randomOffsetLon],
+        budget: 0,
+        date: new Date().toISOString().split('T')[0],
+      };
+      setRoutePoints((prev) => [...prev, newPoint]);
+      setSearchInput('');
+      setIsSearching(false);
+    }
+  };
+
+  const ymapsMapRef = React.useRef(null);
+  const polylineRef = React.useRef(null);
+  const placemarksRef = React.useRef([]);
+
+  React.useEffect(() => {
+    if (activeTab === 'my' && window.ymaps) {
+      window.ymaps.ready(() => {
+        if (!mapRef.current) return;
+
+        // Если карта уже инициализирована, только обновляем данные
+        if (ymapsMapRef.current) {
+          const map = ymapsMapRef.current;
+
+          // Обновляем линию
+          if (polylineRef.current) {
+            polylineRef.current.geometry.setCoordinates(
+              routePoints.map((p) => p.coords),
+            );
+          }
+
+          // Обновляем метки
+          routePoints.forEach((point, index) => {
+            const placemark = placemarksRef.current[index];
+            if (placemark) {
+              // Если метка существует, обновляем ее свойства
+              if (
+                !placemark.geometry
+                  .getCoordinates()
+                  .every((val, i) => val === point.coords[i])
+              ) {
+                placemark.geometry.setCoordinates(point.coords);
+              }
+              placemark.properties.set({
+                iconContent: String(index + 1),
+                iconCaption:
+                  point.budget > 0 ? `${point.budget} ₽` : 'Бесплатно',
+                balloonContentHeader: point.title,
+                balloonContentBody: `Запланированный бюджет: <b>${point.budget} ₽</b>`,
+              });
+            } else {
+              // Если метки нет (добавлена новая точка), создаем ее
+              const newPlacemark = new window.ymaps.Placemark(
+                point.coords,
+                {
+                  iconContent: String(index + 1),
+                  iconCaption:
+                    point.budget > 0 ? `${point.budget} ₽` : 'Бесплатно',
+                  balloonContentHeader: point.title,
+                  balloonContentBody: `Запланированный бюджет: <b>${point.budget} ₽</b>`,
+                },
+                {
+                  preset: 'islands#blueIcon',
+                  draggable: true,
+                },
+              );
+
+              newPlacemark.events.add('drag', () => {
+                const newCoords = newPlacemark.geometry.getCoordinates();
+                if (polylineRef.current) {
+                  const polyCoords =
+                    polylineRef.current.geometry.getCoordinates();
+                  polyCoords[index] = newCoords;
+                  polylineRef.current.geometry.setCoordinates(polyCoords);
+                }
+              });
+
+              newPlacemark.events.add('dragend', () => {
+                const newCoords = newPlacemark.geometry.getCoordinates();
+                setRoutePoints((prev) => {
+                  const newPoints = [...prev];
+                  newPoints[index].coords = newCoords;
+                  return newPoints;
+                });
+              });
+
+              map.geoObjects.add(newPlacemark);
+              placemarksRef.current.push(newPlacemark);
+            }
+          });
+
+          // Удаляем лишние метки, если точки были удалены
+          while (placemarksRef.current.length > routePoints.length) {
+            const removedPlacemark = placemarksRef.current.pop();
+            map.geoObjects.remove(removedPlacemark);
+          }
+
+          return;
+        }
+
+        // Инициализация карты (выполняется только один раз)
+        mapRef.current.innerHTML = '';
+
+        const map = new window.ymaps.Map(mapRef.current, {
+          center:
+            routePoints.length > 0
+              ? routePoints[0].coords
+              : [55.751574, 37.573856],
+          zoom: 11,
+          controls: ['zoomControl'],
+        });
+
+        ymapsMapRef.current = map;
+
+        const polyline = new window.ymaps.Polyline(
+          routePoints.map((p) => p.coords),
+          {},
+          {
+            strokeColor: '#0ea5e9',
+            strokeWidth: 4,
+            strokeStyle: 'shortdash',
+          },
+        );
+        map.geoObjects.add(polyline);
+        polylineRef.current = polyline;
+        placemarksRef.current = [];
+
+        routePoints.forEach((point, index) => {
+          const placemark = new window.ymaps.Placemark(
+            point.coords,
+            {
+              iconContent: String(index + 1),
+              iconCaption: point.budget > 0 ? `${point.budget} ₽` : 'Бесплатно',
+              balloonContentHeader: point.title,
+              balloonContentBody: `Запланированный бюджет: <b>${point.budget} ₽</b>`,
+            },
+            {
+              preset: 'islands#blueIcon',
+              draggable: true,
+            },
+          );
+
+          placemark.events.add('drag', () => {
+            const newCoords = placemark.geometry.getCoordinates();
+            if (polylineRef.current) {
+              const polyCoords = polylineRef.current.geometry.getCoordinates();
+              polyCoords[index] = newCoords;
+              polylineRef.current.geometry.setCoordinates(polyCoords);
+            }
+          });
+
+          placemark.events.add('dragend', () => {
+            const newCoords = placemark.geometry.getCoordinates();
+            setRoutePoints((prev) => {
+              const newPoints = [...prev];
+              newPoints[index].coords = newCoords;
+              return newPoints;
+            });
+          });
+
+          map.geoObjects.add(placemark);
+          placemarksRef.current.push(placemark);
+        });
+
+        if (routePoints.length > 0) {
+          map.setBounds(map.geoObjects.getBounds(), {
+            checkZoomRange: true,
+            zoomMargin: 40,
+          });
+        }
+      });
+    }
+
+    // Очистка при размонтировании или смене вкладки
+    return () => {
+      if (activeTab !== 'my' && ymapsMapRef.current) {
+        ymapsMapRef.current.destroy();
+        ymapsMapRef.current = null;
+        polylineRef.current = null;
+        placemarksRef.current = [];
+      }
+    };
+  }, [activeTab, routePoints]);
 
   const categories = [
     { id: 'city', label: 'Город', icon: 'MapPin' },
@@ -24,36 +351,36 @@ function PlannerPage({ onBack }) {
     },
     {
       id: 2,
-      title: 'ОАЭ: Дубай',
-      desc: 'Футуристичные небоскребы и сафари в золотых песках.',
-      total: '85 000 ₽',
-      img: 'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['⚡ Активный', 'ОАЭ'],
-      routeCount: '4.2к',
-      temp: '+32°',
+      title: 'Алтай: Золотые Горы',
+      desc: 'Дикая природа, бирюзовая Катунь и бескрайние степи.',
+      total: '55 000 ₽',
+      img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⚡ Активный', 'РФ'],
+      routeCount: '2.8к',
+      temp: '+8°',
       weatherIcon: 'Sun',
     },
     {
       id: 3,
-      title: 'Мальдивы: Рай',
-      desc: 'Райский отдых на воде с видом на бескрайний океан.',
-      total: '125 000 ₽',
-      img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=2070&auto=format&fit=crop',
-      tags: ['🌴 Пляж', 'Мальдивы'],
-      routeCount: '1.8к',
-      temp: '+29°',
-      weatherIcon: 'Sun',
+      title: 'Байкал: Ледяная Сказка',
+      desc: 'Самое глубокое озеро планеты с чистейшим прозрачным льдом.',
+      total: '65 000 ₽',
+      img: 'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['❄️ Зима', 'РФ'],
+      routeCount: '3.1к',
+      temp: '-15°',
+      weatherIcon: 'Cloud',
     },
     {
       id: 4,
-      title: 'Турция: Каппадокия',
-      desc: 'Полет на шарах над долиной сказочных дымоходов.',
-      total: '65 000 ₽',
-      img: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=2000&auto=format&fit=crop',
-      tags: ['🎈 Романтика', 'Турция'],
-      routeCount: '2.5к',
-      temp: '+18°',
-      weatherIcon: 'Cloud',
+      title: 'Камчатка: Вулканы',
+      desc: 'Путешествие на край света к огнедышащим горам и океану.',
+      total: '115 000 ₽',
+      img: 'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
+      tags: ['⛰️ Экстрим', 'РФ'],
+      routeCount: '1.5к',
+      temp: '+5°',
+      weatherIcon: 'Wind',
     },
   ];
 
@@ -71,7 +398,7 @@ function PlannerPage({ onBack }) {
               onClick={() => setActiveTab('my')}
               className={`flex-1 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'my' ? 'bg-white text-brand-indigo shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
             >
-              Мои
+              Конструктор
             </button>
             <button
               onClick={() => setActiveTab('popular')}
@@ -85,72 +412,266 @@ function PlannerPage({ onBack }) {
         {activeTab === 'my' ? (
           /* КОНСТРУКТОР МАРШРУТА */
           <div className="animate-in fade-in duration-500">
-            <div className="relative -mx-4 px-4 md:mx-0 md:px-0 mb-10">
-              <div className="overflow-x-auto md:overflow-x-visible no-scrollbar">
-                <div className="flex md:grid md:grid-cols-5 gap-3 md:gap-4 min-w-max md:min-w-0 pb-2 pr-4 md:pr-0">
-                  {categories.map((cat) => (
-                    <div
-                      key={cat.id}
-                      className="flex-1 flex items-center justify-between gap-1 p-2 md:p-1.5 px-3 md:px-2 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-brand-sky transition-all cursor-pointer group shrink-0 overflow-hidden w-[150px] md:w-auto"
-                    >
-                      <div className="flex items-center gap-1.5 md:gap-2 shrink-0 overflow-hidden">
-                        <div className="p-1.5 md:p-1.5 bg-slate-50 group-hover:bg-brand-sky/10 rounded-lg text-slate-500 group-hover:text-brand-sky transition-colors shrink-0">
-                          <Icon name={cat.icon} size={14} />
-                        </div>
-                        <span className="font-bold text-[13px] text-brand-indigo whitespace-nowrap truncate">
-                          {cat.label}
-                        </span>
-                      </div>
-                      <div className="w-4 h-4 md:w-[18px] md:h-[18px] rounded-full bg-brand-sky text-white flex items-center justify-center shadow-sm shrink-0 transition-transform active:scale-90 ml-1">
-                        <Icon name="Plus" size={10} className="shrink-0" />
-                      </div>
-                    </div>
-                  ))}
-                  <div className="w-12 shrink-0 md:hidden"></div>
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none md:hidden z-10"></div>
-            </div>
-
             <div className="mb-10 w-full">
-              <div className="flex flex-col md:flex-row gap-3 items-center w-full">
-                <div className="w-full md:flex-1 relative group">
+              <div
+                ref={searchContainerRef}
+                className="flex flex-col md:flex-row gap-4 w-full relative items-center"
+              >
+                <div className="w-full relative group flex-1">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors">
-                    <Icon name="Search" size={18} />
+                    {isSearching ? (
+                      <div className="w-5 h-5 border-2 border-brand-sky border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Icon name="Search" size={20} />
+                    )}
                   </div>
                   <input
                     type="text"
-                    placeholder="Поиск города или места..."
-                    className="w-full pl-11 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-medium text-sm md:text-base placeholder:text-slate-400"
+                    value={searchInput}
+                    onChange={handleSearchInput}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' && handleAddLocation(searchInput)
+                    }
+                    placeholder="Поиск места..."
+                    className="w-full pl-12 pr-4 py-4 md:py-5 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all placeholder:text-slate-400 shadow-sm"
                   />
                 </div>
-                <button className="w-full md:w-auto md:min-w-[150px] md:shrink-0 h-14 px-8 bg-brand-amber hover:bg-brand-amber/90 text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-brand-amber/30 active:scale-95 transition-all text-sm md:text-base">
-                  СОЗДАТЬ
+
+                <button
+                  onClick={() => handleAddLocation(searchInput)}
+                  disabled={isSearching}
+                  className="w-full md:w-auto px-8 py-4 md:py-5 bg-[#f59e0b] hover:bg-[#d97706] text-white rounded-xl md:rounded-2xl font-black uppercase tracking-widest text-sm md:text-base shadow-xl shadow-[#f59e0b]/30 active:scale-95 transition-all whitespace-nowrap disabled:opacity-70"
+                >
+                  ДОБАВИТЬ
                 </button>
+
+                {/* Всплывающие варианты Яндекс Карт + AI */}
+                {showOptions && searchInput.length > 2 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-100 shadow-2xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex flex-col">
+                      {searchResults.length > 0 ? (
+                        searchResults.map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleAddLocation(item)}
+                            className="flex items-center gap-3 w-full text-left px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 group"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-slate-100 group-hover:bg-brand-sky/10 flex items-center justify-center text-slate-400 group-hover:text-brand-sky transition-colors shrink-0">
+                              <Icon name="MapPin" size={14} />
+                            </div>
+                            <div className="flex flex-col flex-1 overflow-hidden">
+                              <span className="font-bold text-slate-700 group-hover:text-brand-indigo truncate">
+                                {item.displayName || item.value}
+                              </span>
+                            </div>
+                            <Icon
+                              name="Plus"
+                              size={14}
+                              className="ml-auto text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                            />
+                          </button>
+                        ))
+                      ) : (
+                        <div className="px-5 py-4 text-slate-500 text-sm font-medium text-center">
+                          Ищем варианты...
+                        </div>
+                      )}
+                      <button
+                        onClick={() => onChatWithAI?.(searchInput)}
+                        className="flex items-center gap-3 w-full text-left px-5 py-5 bg-slate-50 hover:bg-slate-100 transition-colors group mt-2 border-t border-slate-100"
+                      >
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-violet-500 to-indigo-400 text-white flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                          <Icon name="MessageSquare" size={22} />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-black text-brand-indigo uppercase tracking-wider text-xs">
+                            Найти с AI
+                          </span>
+                          <span className="text-slate-500 text-sm font-medium">
+                            AI найдет место: «{searchInput}»
+                          </span>
+                        </div>
+                        <Icon
+                          name="ArrowRight"
+                          size={18}
+                          className="ml-auto text-brand-indigo transition-transform group-hover:translate-x-1"
+                        />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="w-full aspect-[4/5] md:aspect-[21/9] rounded-[2.5rem] overflow-hidden relative border border-slate-200 shadow-inner bg-slate-50 group">
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
-                <div className="text-center transform transition-transform group-hover:scale-105 pointer-events-auto">
-                  <div className="w-14 h-14 bg-brand-sky text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl animate-bounce border-4 border-white">
-                    <Icon name="Map" size={28} />
-                  </div>
-                  <h3 className="text-lg md:text-2xl font-black text-slate-300 uppercase tracking-[0.2em] select-none text-center">
-                    КАРТА МАРШРУТА
+              <div ref={mapRef} className="w-full h-full"></div>
+            </div>
+
+            {/* РАСПРЕДЕЛЕНИЕ БЮДЖЕТА */}
+            <div className="mb-10 mt-10 w-full bg-white rounded-[2rem] p-6 md:p-8 border border-slate-100 shadow-xl shadow-slate-200/20">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-brand-indigo uppercase tracking-widest">
+                    Бюджет маршрута
                   </h3>
-                  <p className="text-xs md:text-sm text-slate-400 mt-2 font-medium max-w-[280px] mx-auto text-center leading-relaxed">
-                    Маршрут появится после добавления первой точки.
-                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="font-black text-slate-400 uppercase tracking-widest text-xs md:text-sm">
+                    Планируемый:
+                  </span>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={plannedBudget}
+                      onChange={(e) =>
+                        setPlannedBudget(Number(e.target.value) || 0)
+                      }
+                      className="w-24 md:w-32 px-3 py-2 bg-white border border-slate-200 rounded-xl text-right font-bold text-brand-indigo focus:ring-2 focus:ring-brand-sky/20 outline-none transition-all pr-7 text-sm md:text-base"
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold pointer-events-none text-sm">
+                      ₽
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="absolute bottom-6 right-6 flex flex-col gap-2">
-                <button className="w-9 h-9 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:text-brand-sky transition-all active:scale-90 shadow-sm">
-                  <Icon name="Plus" size={16} />
-                </button>
-                <button className="w-9 h-9 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:text-brand-sky transition-all active:scale-90 font-black shadow-sm">
-                  —
-                </button>
+
+              <div className="flex flex-col gap-3">
+                {routePoints.map((point, i) => (
+                  <div
+                    key={point.id}
+                    className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 group bg-slate-50 p-4 md:p-4 rounded-2xl border border-transparent hover:border-slate-200 transition-all shadow-sm hover:shadow-md relative"
+                  >
+                    <button
+                      onClick={() => handleDeletePoint(point.id)}
+                      className="md:hidden absolute top-3 right-3 p-2 text-slate-300 hover:text-red-500 transition-colors z-10"
+                    >
+                      <Icon name="Plus" size={18} className="rotate-45" />
+                    </button>
+                    <div className="flex items-center gap-3 flex-1 min-w-0 pr-8 md:pr-0">
+                      <div className="w-5 h-5 md:w-6 md:h-6 shrink-0 rounded-full bg-brand-sky text-white font-bold flex items-center justify-center text-[10px] shadow-sm">
+                        {i + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {editingPointId === point.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              autoFocus
+                              type="text"
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onBlur={() => handleSaveEdit(point.id)}
+                              onKeyDown={(e) =>
+                                e.key === 'Enter' && handleSaveEdit(point.id)
+                              }
+                              className="w-full bg-white border border-brand-sky rounded-lg px-2 py-1 font-bold text-slate-700 text-sm outline-none"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-slate-700 text-sm md:text-base truncate">
+                              {point.title}
+                            </span>
+                            <button
+                              onClick={() =>
+                                handleEditPoint(point.id, point.title)
+                              }
+                              className="p-1 text-slate-300 hover:text-brand-sky transition-all shrink-0"
+                              title="Переименовать и обновить место"
+                            >
+                              <Icon name="Pencil" size={14} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto justify-start">
+                      <div className="relative w-full md:w-44">
+                        <input
+                          type="date"
+                          value={point.date || ''}
+                          onChange={(e) => {
+                            const newPoints = [...routePoints];
+                            newPoints[i].date = e.target.value;
+                            setRoutePoints(newPoints);
+                          }}
+                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl font-bold text-slate-500 focus:ring-2 focus:ring-brand-sky/20 outline-none transition-all text-sm md:text-base"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-3 w-full md:w-auto">
+                        <div className="relative w-full md:w-44">
+                          <input
+                            type="number"
+                            min="0"
+                            value={point.budget}
+                            onChange={(e) => {
+                              const newPoints = [...routePoints];
+                              newPoints[i].budget = Math.max(
+                                0,
+                                Number(e.target.value) || 0,
+                              );
+                              setRoutePoints(newPoints);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === '-' || e.key === 'e')
+                                e.preventDefault();
+                            }}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-right font-bold text-brand-indigo focus:ring-2 focus:ring-brand-sky/20 outline-none transition-all pr-7 text-sm md:text-base"
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold pointer-events-none text-sm">
+                            ₽
+                          </span>
+                        </div>
+                        {/* Кнопка удаления для десктопа */}
+                        <button
+                          onClick={() => handleDeletePoint(point.id)}
+                          className="hidden md:flex p-2 text-slate-300 hover:text-red-500 transition-colors shrink-0"
+                          title="Удалить точку"
+                        >
+                          <Icon name="Plus" size={18} className="rotate-45" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="mt-4 pt-6 border-t border-slate-200/60 flex flex-col gap-6">
+                  <div className="flex items-center justify-between px-2">
+                    <span className="font-black text-slate-400 uppercase tracking-widest text-xs md:text-sm">
+                      Итого по точкам
+                    </span>
+                    <span
+                      className={`font-black ${totalBudget > plannedBudget && plannedBudget > 0 ? 'text-red-500' : totalBudget <= plannedBudget && plannedBudget > 0 ? 'text-emerald-500' : 'text-brand-amber'} text-xl md:text-3xl drop-shadow-sm`}
+                    >
+                      {totalBudget.toLocaleString('ru-RU')} ₽
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={isActiveRoute}
+                          onChange={(e) => setIsActiveRoute(e.target.checked)}
+                        />
+                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-sky"></div>
+                      </div>
+                      <span className="text-sm font-bold text-slate-600 group-hover:text-brand-indigo transition-colors">
+                        Сделать активным маршрутом
+                      </span>
+                    </label>
+
+                    <button
+                      onClick={() => onSave?.({ points: routePoints, budget: totalBudget, isActive: isActiveRoute })}
+                      className="w-full md:w-auto px-8 py-4 bg-brand-indigo text-white rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-brand-indigo/20 active:scale-95 transition-all"
+                    >
+                      СОХРАНИТЬ МАРШРУТ
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -159,25 +680,31 @@ function PlannerPage({ onBack }) {
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="w-full mb-10">
               <div className="relative group mb-8">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors"><Icon name="MapPin" size={20} /></div>
-                <input type="text" defaultValue="Москва" className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all placeholder:text-slate-400" />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-sky transition-colors">
+                  <Icon name="MapPin" size={20} />
+                </div>
+                <input
+                  type="text"
+                  defaultValue="Москва"
+                  className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all placeholder:text-slate-400"
+                />
               </div>
 
               <div className="relative -mx-4 px-4 md:mx-0 md:px-0">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar md:overflow-visible md:flex-nowrap pb-2">
-                  {['Все', 'Активный', 'Пляж', 'Романтика'].map(f => (
+                  {['Все', 'Активный', 'Зима', 'Экстрим'].map((f) => (
                     <button
                       key={f}
                       onClick={() => setSelectedFilter(f)}
                       className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 shrink-0 active:scale-95 select-none outline-none border-2 ${
-                        selectedFilter === f 
-                          ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15' 
+                        selectedFilter === f
+                          ? 'bg-brand-sky text-white border-brand-sky shadow-lg shadow-brand-sky/15'
                           : 'bg-white text-slate-500 border-slate-100 hover:border-brand-sky/30 hover:text-brand-indigo hover:bg-slate-50'
                       }`}
                     >
                       {f === 'Активный' && <span className="text-sm">⚡</span>}
-                      {f === 'Пляж' && <span className="text-sm">🌴</span>}
-                      {f === 'Романтика' && <span className="text-sm">🎈</span>}
+                      {f === 'Зима' && <span className="text-sm">❄️</span>}
+                      {f === 'Экстрим' && <span className="text-sm">⛰️</span>}
                       {f}
                     </button>
                   ))}
@@ -188,7 +715,11 @@ function PlannerPage({ onBack }) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 pb-24">
-              {POPULAR_TOURS.filter(tour => selectedFilter === 'Все' || tour.tags.some(tag => tag.includes(selectedFilter))).map((res, i) => (
+              {POPULAR_TOURS.filter(
+                (tour) =>
+                  selectedFilter === 'Все' ||
+                  tour.tags.some((tag) => tag.includes(selectedFilter)),
+              ).map((res, i) => (
                 <div key={i} className="group cursor-pointer">
                   <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
                     <img
@@ -206,10 +737,8 @@ function PlannerPage({ onBack }) {
                       <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
                         {res.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
-                        <Icon name="MapPin" size={14} />
-                        <span>{res.routeCount} маршрутов</span>
-                      </div>
+                                            <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
+                                            </div>
                       <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
                         {res.total}
                       </div>
