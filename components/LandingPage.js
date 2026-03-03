@@ -251,7 +251,7 @@ function LandingPage({ scenario, setScenario, onStart, onTourSelect, onManualFor
                     : 'bg-white/10 border border-white/10 text-white hover:bg-white/20'
                 }`}
               >
-                ✨ AI-поиск
+                AI-поиск
               </button>
               <button
                 onClick={() => setSearchMode('manual')}
@@ -261,7 +261,7 @@ function LandingPage({ scenario, setScenario, onStart, onTourSelect, onManualFor
                     : 'bg-white/10 border border-white/10 text-white hover:bg-white/20'
                 }`}
               >
-                🛠️ Ручной
+                Ручной
               </button>
             </div>
 
