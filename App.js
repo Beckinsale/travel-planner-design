@@ -243,12 +243,21 @@ function App() {
 
  const [selectedPredefinedRoute, setSelectedPredefinedRoute] = useState(null);
  const [editingRoute, setEditingRoute] = useState(null); // New state for route being edited
+ const [initialManualFormData, setInitialManualFormData] = useState(null); // For manual form data from landing page
  const [showUserMenu, setShowUserMenu] = useState(false);
  const userMenuRef = useRef(null);
 
  const handleEditRoute = (route) => {
    setEditingRoute(route);
    setView('planner');
+   window.scrollTo(0, 0);
+ };
+
+ const handleManualFormSubmit = (formData) => {
+   setInitialManualFormData(formData);
+   setEditingRoute(null);
+   setView('planner');
+   setActiveTab('my');
    window.scrollTo(0, 0);
  };
 
@@ -448,6 +457,7 @@ function App() {
                 onStart={handleStart}
                 onTourSelect={handlePredefinedRouteSelect}
                 onGoToDirections={handleGoToDirections}
+                onManualFormSubmit={handleManualFormSubmit}
               />
             )}
             {view === 'tour' && (
@@ -469,6 +479,8 @@ function App() {
                   editingRoute={editingRoute}
                   activeRoute={activeRoute}
                   initialTab={activeTab}
+                  initialManualFormData={initialManualFormData}
+                  onInitialDataUsed={() => setInitialManualFormData(null)}
                 />
               </div>
             )}

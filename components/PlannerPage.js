@@ -4,6 +4,8 @@ function PlannerPage({
   onTourSelect,
   onSave,
   editingRoute,
+  initialManualFormData,
+  onInitialDataUsed,
 }) {
   const [activeTab, setActiveTab] = React.useState('my');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
@@ -81,6 +83,99 @@ function PlannerPage({
     () => routePoints.reduce((sum, p) => sum + p.budget, 0),
     [routePoints],
   );
+
+  // Handle initial manual form data from landing page
+  React.useEffect(() => {
+    if (initialManualFormData && !editingRoute) {
+      const { from, to, budget } = initialManualFormData;
+
+      // Set budget
+      if (budget) {
+        setPlannedBudget(Number(budget) || 0);
+      }
+
+      // Add from and to locations as route points
+      if (window.ymaps && (from || to)) {
+        window.ymaps.ready(() => {
+          const newPoints = [];
+
+          const addLocation = (title, isLast) => {
+            if (!title || !title.trim()) return;
+
+            window.ymaps
+              .geocode(title)
+              .then((res) => {
+                const firstGeoObject = res.geoObjects.get(0);
+                const coords = firstGeoObject
+                  ? firstGeoObject.geometry.getCoordinates()
+                  : [55.751574, 37.573856];
+
+                newPoints.push({
+                  id: Date.now() + Math.random(),
+                  title: title,
+                  coords: coords,
+                  budget: 0,
+                  date: new Date().toISOString().split('T')[0],
+                });
+
+                if (isLast) {
+                  setRoutePoints(newPoints);
+                  onInitialDataUsed?.();
+                }
+              })
+              .catch(() => {
+                const randomOffsetLat = (Math.random() - 0.5) * 0.1;
+                const randomOffsetLon = (Math.random() - 0.5) * 0.1;
+
+                newPoints.push({
+                  id: Date.now() + Math.random(),
+                  title: title,
+                  coords: [
+                    55.751574 + randomOffsetLat,
+                    37.573856 + randomOffsetLon,
+                  ],
+                  budget: 0,
+                  date: new Date().toISOString().split('T')[0],
+                });
+
+                if (isLast) {
+                  setRoutePoints(newPoints);
+                  onInitialDataUsed?.();
+                }
+              });
+          };
+
+          if (from) addLocation(from, !to);
+          if (to) addLocation(to, true);
+        });
+      } else if (!window.ymaps && (from || to)) {
+        // Fallback if ymaps is not available
+        const newPoints = [];
+        if (from) {
+          newPoints.push({
+            id: Date.now(),
+            title: from,
+            coords: [55.751574, 37.573856],
+            budget: 0,
+            date: new Date().toISOString().split('T')[0],
+          });
+        }
+        if (to) {
+          newPoints.push({
+            id: Date.now() + 1,
+            title: to,
+            coords: [55.8, 37.6],
+            budget: 0,
+            date: new Date().toISOString().split('T')[0],
+          });
+        }
+        if (newPoints.length > 0) {
+          setRoutePoints(newPoints);
+          onInitialDataUsed?.();
+        }
+      }
+    }
+  }, [initialManualFormData, editingRoute, onInitialDataUsed]);
 
   const handleSearchInput = (e) => {
     const val = e.target.value;

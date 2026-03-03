@@ -1,4 +1,4 @@
-function LandingPage({ scenario, setScenario, onStart, onTourSelect }) {
+function LandingPage({ scenario, setScenario, onStart, onTourSelect, onManualFormSubmit }) {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [searchMode, setSearchMode] = React.useState('ai');
   const [manualForm, setManualForm] = React.useState({
@@ -336,18 +336,22 @@ function LandingPage({ scenario, setScenario, onStart, onTourSelect }) {
                   </div>
                   <button
                     onClick={() => {
-                      const parts = [];
-                      if (manualForm.from) parts.push(`из ${manualForm.from}`);
-                      if (manualForm.to) parts.push(`в ${manualForm.to}`);
-                      if (manualForm.dateFrom && manualForm.dateTo) {
-                        const fmt = (d) => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-                        parts.push(`даты: ${fmt(manualForm.dateFrom)} — ${fmt(manualForm.dateTo)}`);
-                      } else if (manualForm.dateFrom) {
-                        parts.push(`с ${new Date(manualForm.dateFrom).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}`);
+                      if (onManualFormSubmit) {
+                        onManualFormSubmit(manualForm);
+                      } else {
+                        const parts = [];
+                        if (manualForm.from) parts.push(`из ${manualForm.from}`);
+                        if (manualForm.to) parts.push(`в ${manualForm.to}`);
+                        if (manualForm.dateFrom && manualForm.dateTo) {
+                          const fmt = (d) => new Date(d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+                          parts.push(`даты: ${fmt(manualForm.dateFrom)} — ${fmt(manualForm.dateTo)}`);
+                        } else if (manualForm.dateFrom) {
+                          parts.push(`с ${new Date(manualForm.dateFrom).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}`);
+                        }
+                        if (manualForm.budget) parts.push(`бюджет: ${manualForm.budget}`);
+                        const query = parts.length > 0 ? `Подобрать маршрут ${parts.join(', ')}` : '';
+                        handleSearch(query);
                       }
-                      if (manualForm.budget) parts.push(`бюджет: ${manualForm.budget}`);
-                      const query = parts.length > 0 ? `Подобрать маршрут ${parts.join(', ')}` : '';
-                      handleSearch(query);
                     }}
                     className="w-auto px-12 mt-6 py-4 bg-brand-amber text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-brand-amber/20 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 mx-auto"
                   >
