@@ -2,6 +2,7 @@ function AIAssistantPage({
   onBack,
   onProfile,
   initialQuery,
+  aiRouteContext, // New prop for AI route context
   activeTab,
   setActiveTab,
   user,
@@ -71,13 +72,27 @@ function AIAssistantPage({
     },
   ];
 
-  const [messages, setMessages] = React.useState([
-    {
-      id: 1,
-      type: 'bot',
-      text: 'Привет! Куда отправимся? Я могу подобрать оптимальный маршрут прямо из вашего города.',
-    },
-  ]);
+  const [messages, setMessages] = React.useState(() => {
+    if (aiRouteContext) {
+      const routePointsText = aiRouteContext.points.map(p => `- ${p.title} (${p.date || 'без даты'}, ${p.budget}₽)`).join('\n');
+      const initialBotMessage = `Привет! Я вижу, ты хочешь отредактировать маршрут.\n\nТекущий маршрут включает:\n${routePointsText}\n\nОбщий бюджет: **${aiRouteContext.budget}₽**.\n\nЧто бы ты хотел изменить?`;
+      return [
+        {
+          id: 1,
+          type: 'bot',
+          text: initialBotMessage,
+        },
+      ];
+    } else {
+      return [
+        {
+          id: 1,
+          type: 'bot',
+          text: 'Привет! Куда отправимся? Я могу подобрать оптимальный маршрут прямо из вашего города.',
+        },
+      ];
+    }
+  });
 
   const QUICK_ACTIONS = [
     {
@@ -126,6 +141,12 @@ function AIAssistantPage({
       setIsTyping(false);
       const foundTour = ALL_TOURS.find((t) => t.title === message);
 
+      const defaultSuggestions = [
+        { label: 'Алтай', query: QUICK_ACTIONS[0].query },
+        { label: 'Байкал', query: QUICK_ACTIONS[3].query },
+        { label: 'Камчатка', query: QUICK_ACTIONS[4].query },
+      ];
+
       const botMsg = {
         id: Date.now() + 1,
         type: 'bot',
@@ -136,16 +157,16 @@ function AIAssistantPage({
         suggestions: foundTour
           ? [
               {
-                label: '📅 Выбрать даты',
+                label: 'Выбрать даты',
                 query: `Выбрать даты для ${foundTour.title}`,
               },
-              { label: '🏨 Отели', query: `Лучшие отели в ${foundTour.title}` },
+              { label: 'Отели', query: `Лучшие отели в ${foundTour.title}` },
               {
-                label: '💰 Итоговая цена',
+                label: 'Итоговая цена',
                 query: `Рассчитать стоимость ${foundTour.title}`,
               },
             ]
-          : [],
+          : defaultSuggestions,
       };
       setMessages((prev) => [...prev, botMsg]);
       scrollToBottom('smooth');
@@ -153,11 +174,16 @@ function AIAssistantPage({
   };
 
   React.useEffect(() => {
-    if (initialQuery && isFirstRender.current) {
+    if (isFirstRender.current) {
       isFirstRender.current = false;
-      handleSend(initialQuery, true);
+      if (initialQuery && typeof initialQuery === 'string') {
+        handleSend(initialQuery, true);
+      } else if (aiRouteContext) {
+        // If we have aiRouteContext, the initial message is already set in useState, just scroll
+        scrollToBottom("smooth");
+      }
     }
-  }, [initialQuery]);
+  }, [initialQuery, aiRouteContext]);
 
   React.useEffect(() => {
     scrollToBottom('smooth');
@@ -314,12 +340,10 @@ function AIAssistantPage({
               <button
                 key={idx}
                 onClick={() => handleSend(action.query)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 hover:border-brand-sky/30 hover:bg-slate-50 rounded-xl whitespace-nowrap transition-all active:scale-95 group shadow-sm shrink-0"
+                className="px-5 py-2.5 bg-white border border-slate-100 hover:border-brand-sky/30 hover:bg-slate-50 rounded-full whitespace-nowrap transition-all active:scale-95 shadow-sm shrink-0 text-xs font-black text-slate-500 hover:text-brand-indigo uppercase tracking-widest flex items-center gap-1.5"
               >
-                <span className="text-base">{action.icon}</span>
-                <span className="text-xs font-black text-slate-500 group-hover:text-brand-indigo transition-colors uppercase tracking-wider">
-                  {action.label}
-                </span>
+                <span>{action.icon}</span>
+                {action.label}
               </button>
             ))}
             <div className="w-12 shrink-0 md:hidden"></div>

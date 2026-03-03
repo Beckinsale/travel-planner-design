@@ -140,7 +140,7 @@ function Sidebar({ activeView, activeTab, onViewChange }) {
       view: 'ai-assistant',
       tab: 'chat',
     },
-    { id: 'planner', icon: 'Sliders', label: 'Маршруты', view: 'planner' },
+    { id: 'planner', icon: 'MapPin', label: 'Маршруты', view: 'planner' },
     { id: 'profile', icon: 'User', label: 'Профиль', view: 'profile' },
   ];
   return (
@@ -175,7 +175,7 @@ function MobileNav({ activeView, activeTab, onViewChange }) {
       view: 'ai-assistant',
       tab: 'chat',
     },
-    { id: 'planner', icon: 'Sliders', label: 'Маршруты', view: 'planner' },
+    { id: 'planner', icon: 'MapPin', label: 'Маршруты', view: 'planner' },
     { id: 'profile', icon: 'User', label: 'Профиль', view: 'profile' },
   ];
   return (
@@ -202,9 +202,11 @@ function MobileNav({ activeView, activeTab, onViewChange }) {
 }
 
 function App() {
+  console.log("App: v1.0.1 - Cleaning up handlers");
   const [view, setView] = useState('landing');
   const [scenario, setScenario] = useState('ai');
   const [initialQuery, setInitialQuery] = useState('');
+  const [aiRouteContext, setAiRouteContext] = useState(null); // New state for AI route context
   const [activeTab, setActiveTab] = useState('chat');
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [user, setUser] = useState({
@@ -239,7 +241,7 @@ function App() {
    [user.savedRoutes]
  );
 
- const [selectedTour, setSelectedTour] = useState(null);
+ const [selectedPredefinedRoute, setSelectedPredefinedRoute] = useState(null);
  const [editingRoute, setEditingRoute] = useState(null); // New state for route being edited
  const [showUserMenu, setShowUserMenu] = useState(false);
  const userMenuRef = useRef(null);
@@ -283,9 +285,14 @@ function App() {
     setEditingRoute(null); // Clear editing route after saving
   };
 
-  const handleStart = (query) => {
-    if (typeof query === 'string') setInitialQuery(query);
-    else setInitialQuery('');
+  const handleStart = (queryOrRouteContext) => {
+    if (typeof queryOrRouteContext === 'string') {
+      setInitialQuery(queryOrRouteContext);
+      setAiRouteContext(null);
+    } else {
+      setAiRouteContext(queryOrRouteContext);
+      setInitialQuery('');
+    }
     setView('ai-assistant');
     setActiveTab('chat');
     window.scrollTo(0, 0);
@@ -297,9 +304,16 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  const handleTourSelect = (tour) => {
-    setSelectedTour(tour);
+  const handlePredefinedRouteSelect = (predefinedRoute) => {
+    console.log("App: Selecting predefined route:", predefinedRoute);
+    setSelectedPredefinedRoute(predefinedRoute);
     setView('tour');
+    window.scrollTo(0, 0);
+  };
+
+  const handleGoToDirections = () => {
+    setView("planner");
+    setActiveTab("popular");
     window.scrollTo(0, 0);
   };
 
@@ -362,7 +376,7 @@ function App() {
                       {[
                         { id: 'landing', label: 'Главная', icon: 'Home' },
                         { id: 'ai-assistant', label: 'AI Гид', icon: 'MessageSquare', tab: 'chat', color: 'bg-purple-600 text-white shadow-purple-500/20 shadow-lg' },
-                        { id: 'planner', label: 'Маршруты', icon: 'Sliders' },
+                        { id: 'planner', label: 'Маршруты', icon: 'MapPin' },
                         { id: 'profile', label: 'Личный кабинет', icon: 'User' },
                       ].map((item) => (
                         <button
@@ -432,13 +446,14 @@ function App() {
                 scenario={scenario}
                 setScenario={setScenario}
                 onStart={handleStart}
-                onTourSelect={handleTourSelect}
+                onTourSelect={handlePredefinedRouteSelect}
+                onGoToDirections={handleGoToDirections}
               />
             )}
             {view === 'tour' && (
               <div className="flex-1 w-full">
                 <TourPage
-                  tour={selectedTour}
+                  predefinedRoute={selectedPredefinedRoute}
                   onBack={() => setView('landing')}
                   onStartChat={handleStart}
                 />
@@ -449,9 +464,11 @@ function App() {
                 <PlannerPage
                   onBack={() => setView('landing')}
                   onChatWithAI={handleStart}
+                  onTourSelect={handlePredefinedRouteSelect}
                   onSave={handleSaveRoute}
                   editingRoute={editingRoute}
                   activeRoute={activeRoute}
+                  initialTab={activeTab}
                 />
               </div>
             )}
@@ -466,6 +483,7 @@ function App() {
                   onBack={() => setView('landing')}
                   onProfile={() => setView('profile')}
                   initialQuery={initialQuery}
+                  aiRouteContext={aiRouteContext} // Pass the route context to AIAssistantPage
                   activeTab={activeTab}
                   setActiveTab={setActiveTab}
                   user={user}

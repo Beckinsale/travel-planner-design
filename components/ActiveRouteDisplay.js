@@ -151,20 +151,52 @@ function ActiveRouteDisplay({ activeRoute, onEditRoute }) {
       <div className="w-full aspect-[4/5] md:aspect-[16/9] rounded-[2rem] overflow-hidden relative border border-slate-200 shadow-inner bg-slate-50 group">
         <div ref={mapRef} className="w-full h-full"></div>
       </div>
-       <div className="bg-white p-5 rounded-[1.5rem] border border-slate-100 shadow-sm transition-all">
-          <p className="text-sm font-bold text-brand-indigo mb-2">Маршрут от {activeRoute.date}</p>
-          <ul className="list-disc list-inside text-sm text-slate-700 mb-4">
-            {activeRoute.points?.map((point, index) => (
-              <li key={point.id}>{index + 1}. {point.title} (Бюджет: {point.budget?.toLocaleString("ru-RU")} ₽)</li>
-            ))}
-          </ul>
-          <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Общий бюджет</span>
-              <span className="font-black text-brand-indigo">{activeRoute.budget?.toLocaleString("ru-RU")} ₽</span>
+       <div className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-brand-sky/10 text-brand-sky flex items-center justify-center">
+              <Icon name="Map" size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Маршрут</p>
+              <p className="text-lg font-black text-brand-indigo">{activeRoute.date}</p>
             </div>
           </div>
+          <button
+            onClick={() => onEditRoute(activeRoute)}
+            className="p-2.5 bg-brand-sky/10 text-brand-sky hover:bg-brand-sky/20 rounded-xl transition-all active:scale-90"
+            title="Редактировать маршрут"
+          >
+            <Icon name="Pencil" size={18} />
+          </button>
         </div>
+
+        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
+          <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Точки маршрута:</h4>
+          <div className="space-y-2">
+            {activeRoute.points?.map((point, idx) => (
+              <div key={point.id} className="flex items-start gap-3">
+                <div className="w-6 h-6 rounded-full bg-brand-sky text-white font-black flex items-center justify-center text-xs shrink-0">
+                  {idx + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800">{point.title}</p>
+                  <p className="text-xs text-slate-500">
+                    {point.budget ? `${point.budget.toLocaleString("ru-RU")} ₽` : 'Бесплатно'}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Общий бюджет</span>
+            <span className="text-xl font-black text-brand-indigo">{activeRoute.budget?.toLocaleString("ru-RU")} ₽</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

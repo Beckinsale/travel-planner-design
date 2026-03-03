@@ -169,52 +169,62 @@ function ProfilePage({ onBack, onChat, user, setUser, onEditRoute, activeRoute }
                 (user.savedRoutes && user.savedRoutes.length > 0) ? (
                   <div className="space-y-4 w-full">
                     {user.savedRoutes.map((route) => (
-                      <div key={route.id} className="bg-white p-5 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-brand-sky/10 text-brand-sky flex items-center justify-center">
-                              <Icon name="Map" size={16} />
+                      <div key={route.id} className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-brand-sky/10 text-brand-sky flex items-center justify-center">
+                              <Icon name="Map" size={20} />
                             </div>
-                            <span className="font-bold text-brand-indigo">Маршрут от {route.date}</span>
+                            <div>
+                              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Маршрут</p>
+                              <p className="text-lg font-black text-brand-indigo">{route.date}</p>
+                            </div>
                           </div>
-                          <span className="text-xs font-black text-slate-300 uppercase tracking-widest">{route.points?.length || 0} точек</span>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {route.points?.slice(0, 3).map((p, idx) => (
-                            <span key={idx} className="px-3 py-1 bg-slate-50 rounded-lg text-xs font-bold text-slate-500 border border-slate-100 truncate max-w-[120px]">
-                              {p.title}
-                            </span>
-                          ))}
-                          {route.points?.length > 3 && (
-                            <span className="px-3 py-1 bg-slate-50 rounded-lg text-xs font-bold text-slate-400">
-                              +{route.points.length - 3}
-                            </span>
-                          )}
+                          <button
+                            onClick={() => onEditRoute(route)}
+                            className="p-2.5 bg-brand-sky/10 text-brand-sky hover:bg-brand-sky/20 rounded-xl transition-all active:scale-90"
+                            title="Редактировать маршрут"
+                          >
+                            <Icon name="Pencil" size={18} />
+                          </button>
                         </div>
 
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-50">
-                          <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Бюджет</span>
-                            <span className="font-black text-brand-indigo">{route.budget?.toLocaleString("ru-RU")} ₽</span>
+                        <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-4">
+                          <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Точки маршрута:</h4>
+                          <div className="space-y-2">
+                            {route.points?.map((point, idx) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <div className="w-6 h-6 rounded-full bg-brand-sky text-white font-black flex items-center justify-center text-xs shrink-0">
+                                  {idx + 1}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-bold text-slate-800">{point.title}</p>
+                                  <p className="text-xs text-slate-500">
+                                    {point.budget ? `${point.budget.toLocaleString("ru-RU")} ₽` : 'Бесплатно'}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                          <div className="flex items-center gap-4">
-                                                      <label className="flex items-center gap-2 cursor-pointer ml-4">
-                                                        <span className="text-sm font-bold text-slate-600">Активен</span>
-                                                        <div className="relative">
-                                                          <input
-                                                            type="checkbox"
-                                                            className="sr-only peer"
-                                                            checked={route.isActive}
-                                                            onChange={() => handleToggleActive(route.id)}
-                                                          />
-                                                          <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-sky"></div>
-                                                        </div>
-                                                      </label>
-                                                      <button onClick={() => onEditRoute(route)} className="p-2.5 bg-brand-sky/10 text-brand-sky hover:bg-brand-sky/20 rounded-xl transition-all active:scale-90">
-                                                                                    <Icon name="Pencil" size={16} />
-                                                                                  </button>
-                                                    </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-50">
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-slate-300 uppercase tracking-tighter">Общий бюджет</span>
+                            <span className="text-xl font-black text-brand-indigo">{route.budget?.toLocaleString("ru-RU")} ₽</span>
+                          </div>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <span className="text-sm font-bold text-slate-600">Активен</span>
+                            <div className="relative">
+                              <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                checked={route.isActive}
+                                onChange={() => handleToggleActive(route.id)}
+                              />
+                              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-sky"></div>
+                            </div>
+                          </label>
                         </div>
                       </div>
                     ))}

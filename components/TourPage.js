@@ -1,82 +1,84 @@
-function TourPage({ tour, onBack, onStartChat }) {
-  if (!tour) return null;
+function TourPage({ predefinedRoute, onBack, onStartChat, onSaveRoute }) {
+  if (!predefinedRoute) return null;
 
-  // Расширенные данные для туров (в реальности это пришло бы из API)
-  const tourDetails = {
-    1: {
-      // Сочи
-      gallery: [
-        'https://images.unsplash.com/photo-1515861461225-1488dfdaf0a8?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1540339832862-47452993c66e?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1564121211835-e88c852648ab?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1496307653780-42ee777d4833?q=80&w=2070&auto=format&fit=crop',
-      ],
-      fullDesc:
-        'Откройте для себя магию контрастов в самом сердце российского Юга. Сочи — это место, где заснеженные пики Кавказских гор встречаются с лазурными водами Черного моря. В этом туре вы пройдете по живописным тропам Красной Поляны, вдохнете свежий горный воздух и насладитесь закатами на Имеретинской набережной. Вас ждут прогулки по реликтовым лесам, подъем на вершину Роза Пик и вечерний релакс в спа-комплексах с видом на горы.',
-      highlights: [
-        'Подъем на высоту 2320м',
-        'Прогулка по каньону Псахо',
-        'Вечернее шоу фонтанов',
-        'Дегустация местной кухни',
-      ],
-    },
-    2: {
-      // Алтай
-      gallery: [
-        'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/20120286/pexels-photo-20120286.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/10103723/pexels-photo-10103723.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/10103720/pexels-photo-10103720.jpeg?auto=compress&cs=tinysrgb&w=800',
-      ],
-      fullDesc:
-        'Алтай — это место силы, где природа сохранилась в своем первозданном виде. Вас ждут бирюзовые воды реки Катунь, величественные горы и перевалы Чуйского тракта. Мы пройдем по самым красивым точкам Горного Алтая, увидим Гейзерное озеро и посетим долину Чулышман. Это путешествие для тех, кто ищет уединения с природой и хочет почувствовать настоящую свободу вдали от городской суеты.',
-      highlights: [
-        'Чуйский тракт',
-        'Сплав по Катуни',
-        'Гейзерное озеро',
-        'Перевал Кату-Ярык',
-      ],
-    },
-    3: {
-      // Байкал
-      gallery: [
-        'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/11832049/pexels-photo-11832049.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/13593452/pexels-photo-13593452.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/10103730/pexels-photo-10103730.jpeg?auto=compress&cs=tinysrgb&w=800',
-      ],
-      fullDesc:
-        'Зимний Байкал — это бесконечная ледяная пустыня с самыми невероятными узорами, которые только может создать природа. Вы увидите знаменитые байкальские пузырьки, огромные торосы и кристально чистые ледяные пещеры. В программе — катание на коньках по самому большому катку мира, поездка на хивусе (катере на воздушной подушке) и знакомство с традициями шаманизма на острове Ольхон.',
-      highlights: [
-        'Лед острова Ольхон',
-        'Пузырьки в метане',
-        'Поездка на хивусе',
-        'Бурятская кухня',
-      ],
-    },
-    4: {
-      // Камчатка
-      gallery: [
-        'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/13593453/pexels-photo-13593453.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/13593456/pexels-photo-13593456.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/13593455/pexels-photo-13593455.jpeg?auto=compress&cs=tinysrgb&w=800',
-      ],
-      fullDesc:
-        'Камчатка — земля льда и пламени на самом краю России. Здесь вы почувствуете дыхание Земли, стоя на краю кратера действующего вулкана. Мы отправимся к подножию Авачинского и Корякского вулканов, прогуляемся по черному песку Халактырского пляжа на берегу Тихого океана и искупаемся в горячих термальных источниках. Это суровое, но невероятно притягательное место для настоящих исследователей.',
-      highlights: [
-        'Восхождение на вулкан',
-        'Тихий океан',
-        'Долина Гейзеров',
-        'Морская прогулка',
-      ],
-    },
-  };
+  const mapRef = React.useRef(null);
+  const ymapsMapRef = React.useRef(null);
+  const polylineRef = React.useRef(null);
+  const placemarksRef = React.useRef([]);
 
-  const details = tourDetails[tour.id] || {
-    gallery: [tour.img],
-    fullDesc: tour.desc,
-    highlights: ['Интересные локации', 'Продуманный маршрут', 'Местная кухня'],
+  React.useEffect(() => {
+    if (!window.ymaps) return;
+
+    window.ymaps.ready(() => {
+      if (!mapRef.current) return;
+
+      if (ymapsMapRef.current) {
+        ymapsMapRef.current.geoObjects.removeAll();
+        placemarksRef.current = [];
+      } else {
+        mapRef.current.innerHTML = ''; // Clear previous map if any
+        ymapsMapRef.current = new window.ymaps.Map(mapRef.current, {
+          center:
+            predefinedRoute.points.length > 0
+              ? predefinedRoute.points[0].coords
+              : [55.751574, 37.573856],
+          zoom: 10,
+          controls: ['zoomControl'],
+        });
+      }
+
+      const map = ymapsMapRef.current;
+
+      const polyline = new window.ymaps.Polyline(
+        predefinedRoute.points.map((p) => p.coords),
+        {},
+        {
+          strokeColor: '#0ea5e9',
+          strokeWidth: 4,
+          strokeStyle: 'shortdash',
+        },
+      );
+      map.geoObjects.add(polyline);
+      polylineRef.current = polyline;
+
+      predefinedRoute.points.forEach((point, index) => {
+        const placemark = new window.ymaps.Placemark(
+          point.coords,
+          {
+            iconContent: String(index + 1),
+            balloonContentHeader: point.title,
+            balloonContentBody: `Бюджет: <b>${point.budget} ₽</b><br/>Дата: ${point.date}`,
+          },
+          {
+            preset: 'islands#blueIcon',
+          },
+        );
+        map.geoObjects.add(placemark);
+        placemarksRef.current.push(placemark);
+      });
+
+      if (predefinedRoute.points.length > 0) {
+        map.setBounds(map.geoObjects.getBounds(), {
+          checkZoomRange: true,
+          zoomMargin: 40,
+        });
+      }
+    });
+
+    return () => {
+      if (ymapsMapRef.current) {
+        ymapsMapRef.current.destroy();
+        ymapsMapRef.current = null;
+        polylineRef.current = null;
+        placemarksRef.current = [];
+      }
+    };
+  }, [predefinedRoute]);
+
+  const details = {
+    gallery: predefinedRoute.points.map((p) => p.image),
+    fullDesc: predefinedRoute.desc,
+    highlights: predefinedRoute.points.map((p) => p.title), // Use point titles as highlights
   };
 
   return (
@@ -90,25 +92,29 @@ function TourPage({ tour, onBack, onStartChat }) {
           <Icon name="ArrowLeft" size={24} />
         </button>
         <button
-          onClick={() => onStartChat(tour.title)}
+          onClick={() =>
+            onStartChat(
+              `Собери маршрут как в маршруте "${predefinedRoute.title}"`,
+            )
+          }
           className="px-6 py-3 bg-brand-sky text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-brand-sky/20 hover:scale-105 active:scale-95 transition-all"
         >
-          Хочу так же
+          Собрать такой маршрут
         </button>
       </div>
 
       {/* Hero Section */}
       <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
         <img
-          src={tour.img}
+          src={predefinedRoute.img}
           className="w-full h-full object-cover animate-slow-zoom"
-          alt={tour.title}
+          alt={predefinedRoute.title}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <div className="absolute bottom-12 left-0 right-0 px-6 md:px-12">
           <div className="max-w-5xl mx-auto">
             <div className="flex flex-wrap gap-2 mb-4">
-              {tour.tags.map((tag, idx) => (
+              {predefinedRoute.tags.map((tag, idx) => (
                 <span
                   key={idx}
                   className="px-4 py-1.5 bg-brand-amber text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-lg"
@@ -118,66 +124,92 @@ function TourPage({ tour, onBack, onStartChat }) {
               ))}
             </div>
             <h1 className="text-4xl md:text-7xl font-black text-white tracking-tight mb-4 drop-shadow-2xl">
-              {tour.title}
+              {predefinedRoute.title}
             </h1>
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-white font-bold">
-                <Icon name="Calendar" size={20} />
-                <span>5-7 дней</span>
-              </div>
-              <div className="flex items-center gap-2 text-white font-bold">
-                <Icon name="Users" size={20} />
-                <span>от 2 чел.</span>
-              </div>
+            <div className="flex items-center gap-2 text-white font-bold">
+              <Icon name="Calendar" size={20} />
+              <span>
+                {predefinedRoute.points.length}{' '}
+                {predefinedRoute.points.length === 1
+                  ? 'точка'
+                  : predefinedRoute.points.length >= 2 &&
+                      predefinedRoute.points.length <= 4
+                    ? 'места'
+                    : 'точек'}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-6 md:px-12 py-12 md:py-20 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-20 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-12">
           {/* Main Info */}
-          <div className="lg:col-span-2">
+          <div>
             <h2 className="text-3xl font-black text-brand-indigo mb-8 uppercase tracking-tight">
-              О путешествии
+              О маршруте
             </h2>
             <p className="text-slate-500 text-xl md:text-2xl font-medium leading-relaxed mb-12">
               {details.fullDesc}
             </p>
 
             <h3 className="text-2xl font-black text-brand-indigo mb-6 uppercase tracking-tight">
-              Галерея
+              Карта маршрута
             </h3>
-            <div className="grid grid-cols-2 gap-4 mb-12">
-              {details.gallery.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="aspect-square rounded-3xl overflow-hidden shadow-lg group"
-                >
-                  <img
-                    src={img}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    alt={`Gallery ${idx}`}
-                  />
+            <div className="w-full aspect-[4/5] md:aspect-[21/9] rounded-[2.5rem] overflow-hidden relative border border-slate-200 shadow-inner bg-slate-50 group mb-12">
+              <div ref={mapRef} className="w-full h-full"></div>
+            </div>
+
+            <h3 className="text-2xl font-black text-brand-indigo mb-8 uppercase tracking-tight">
+              Места маршрута
+            </h3>
+            <div className="space-y-12 mb-12">
+              {predefinedRoute.points.map((point, idx) => (
+                <div key={idx} className="border-b border-slate-200 pb-8 last:border-0">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 rounded-full bg-brand-sky text-white font-black flex items-center justify-center text-sm">
+                      {idx + 1}
+                    </div>
+                    <h4 className="text-xl font-black text-brand-indigo">{point.title}</h4>
+                    <span className="ml-auto text-brand-indigo font-black">
+                      {point.budget.toLocaleString('ru-RU')} ₽
+                    </span>
+                  </div>
+                  <p className="text-slate-600 font-medium mb-4">
+                    Дата: <span className="text-slate-800 font-bold">{new Date(point.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}</span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="aspect-square rounded-2xl overflow-hidden shadow-md group">
+                      <img
+                        src={point.image}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        alt={point.title}
+                      />
+                    </div>
+                    <div className="aspect-square rounded-2xl overflow-hidden shadow-md group">
+                      <img
+                        src={point.image}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        alt={point.title}
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Sidebar Info */}
-          <div className="lg:col-span-1">
+          <div>
             <div className="bg-slate-50 rounded-[2.5rem] p-8 md:p-10 sticky top-32">
               <div className="mb-8">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">
-                  Стоимость тура
+                  Общая стоимость маршрута
                 </span>
                 <div className="text-4xl font-black text-brand-indigo">
-                  {tour.total}
+                  {predefinedRoute.total}
                 </div>
-                <span className="text-sm font-bold text-slate-400">
-                  за человека
-                </span>
               </div>
 
               <div className="space-y-6 mb-10">
@@ -185,7 +217,7 @@ function TourPage({ tour, onBack, onStartChat }) {
                   Что включено:
                 </h4>
                 <ul className="space-y-4">
-                  {details.highlights.map((item, idx) => (
+                  {predefinedRoute.points.map((point, idx) => (
                     <li
                       key={idx}
                       className="flex items-start gap-3 text-slate-600 font-bold"
@@ -193,32 +225,34 @@ function TourPage({ tour, onBack, onStartChat }) {
                       <div className="mt-1 bg-emerald-500 rounded-full p-1 shrink-0">
                         <Icon name="Check" size={12} className="text-white" />
                       </div>
-                      <span>{item}</span>
+                      <span>{point.title}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <button
-                onClick={() =>
-                  onStartChat(`Собери маршрут как в туре "${tour.title}"`)
-                }
-                className="w-full py-5 bg-brand-amber text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-brand-amber/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                onClick={() => onSaveRoute(predefinedRoute)}
+                className="w-full py-5 bg-brand-indigo text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-brand-indigo/20 hover:brightness-90 active:scale-95 transition-all"
               >
-                Забронировать
+                Сохранить<br />маршрут
               </button>
 
-              <p className="text-center text-[10px] text-slate-400 font-bold mt-4 uppercase tracking-tighter">
-                Есть вопросы?{' '}
-                <span
-                  className="text-brand-sky cursor-pointer"
+              <div className="text-center mt-6 flex flex-col items-center gap-3">
+                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
+                  Есть вопросы?
+                </p>
+                <button
                   onClick={() =>
-                    onStartChat(`Расскажи подробнее про тур "${tour.title}"`)
+                    onStartChat(
+                      `Расскажи подробнее про маршрут "${predefinedRoute.title}"`,
+                    )
                   }
+                  className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-purple-500/20 active:scale-95 transition-all"
                 >
                   Спроси AI
-                </span>
-              </p>
+                </button>
+              </div>
             </div>
           </div>
         </div>

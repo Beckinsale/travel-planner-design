@@ -1,4 +1,10 @@
-function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
+function PlannerPage({
+  onBack,
+  onChatWithAI,
+  onTourSelect,
+  onSave,
+  editingRoute,
+}) {
   const [activeTab, setActiveTab] = React.useState('my');
   const [selectedFilter, setSelectedFilter] = React.useState('Все');
   const mapRef = React.useRef(null);
@@ -6,7 +12,9 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
   const [isSearching, setIsSearching] = React.useState(false);
   const [showOptions, setShowOptions] = React.useState(false);
   const [searchResults, setSearchResults] = React.useState([]);
-  const [plannedBudget, setPlannedBudget] = React.useState(editingRoute ? editingRoute.budget : 0);
+  const [plannedBudget, setPlannedBudget] = React.useState(
+    editingRoute ? editingRoute.budget : 0,
+  );
   const searchContainerRef = React.useRef(null);
   const [editingPointId, setEditingPointId] = React.useState(null);
   const [editingTitle, setEditingTitle] = React.useState('');
@@ -65,7 +73,9 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
   };
 
   // Добавим стейт для точек с бюджетом
-  const [routePoints, setRoutePoints] = React.useState(editingRoute ? editingRoute.points : []);
+  const [routePoints, setRoutePoints] = React.useState(
+    editingRoute ? editingRoute.points : [],
+  );
 
   const totalBudget = React.useMemo(
     () => routePoints.reduce((sum, p) => sum + p.budget, 0),
@@ -337,52 +347,221 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
     { id: 'transport', label: 'Транспорт', icon: 'Plane' },
   ];
 
-  const POPULAR_TOURS = [
-    {
-      id: 1,
-      title: 'Сочи: Горы и Море',
-      desc: 'Идеальный баланс: 2 дня в горах, 3 дня на побережье.',
-      total: '45 000 ₽',
-      img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
-      tags: ['⚡ Активный', 'РФ'],
-      routeCount: '1.2к',
-      temp: '+12°',
-      weatherIcon: 'CloudSun',
-    },
-    {
-      id: 2,
-      title: 'Алтай: Золотые Горы',
-      desc: 'Дикая природа, бирюзовая Катунь и бескрайние степи.',
-      total: '55 000 ₽',
-      img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['⚡ Активный', 'РФ'],
-      routeCount: '2.8к',
-      temp: '+8°',
-      weatherIcon: 'Sun',
-    },
-    {
-      id: 3,
-      title: 'Байкал: Ледяная Сказка',
-      desc: 'Самое глубокое озеро планеты с чистейшим прозрачным льдом.',
-      total: '65 000 ₽',
-      img: 'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['❄️ Зима', 'РФ'],
-      routeCount: '3.1к',
-      temp: '-15°',
-      weatherIcon: 'Cloud',
-    },
-    {
-      id: 4,
-      title: 'Камчатка: Вулканы',
-      desc: 'Путешествие на край света к огнедышащим горам и океану.',
-      total: '115 000 ₽',
-      img: 'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
-      tags: ['⛰️ Экстрим', 'РФ'],
-      routeCount: '1.5к',
-      temp: '+5°',
-      weatherIcon: 'Wind',
-    },
-  ];
+  const PREDEFINED_ROUTES_DATA = {
+    Байкал: [
+      {
+        id: 1,
+        title: 'Ледяная сказка Байкала',
+        desc: 'Погрузитесь в мир чистого льда и зимних приключений на озере Байкал.',
+        total: '65 000 ₽',
+        img: 'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
+        tags: ['❄️ Зима', 'РФ'],
+        routeCount: '3.1к',
+        temp: '-15°',
+        weatherIcon: 'Cloud',
+        points: [
+          {
+            id: 1,
+            title: 'Листвянка',
+            coords: [51.8687, 104.8943],
+            budget: 5000,
+            date: '2026-02-01',
+            image:
+              'https://images.pexels.com/photos/9344421/pexels-photo-9344421.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 2,
+            title: 'Ольхон',
+            coords: [53.0784, 107.4103],
+            budget: 10000,
+            date: '2026-02-03',
+            image:
+              'https://images.pexels.com/photos/11832049/pexels-photo-11832049.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 3,
+            title: 'Бухта Песчаная',
+            coords: [52.3382, 105.7196],
+            budget: 2000,
+            date: '2026-02-02',
+            image:
+              'https://images.pexels.com/photos/13593452/pexels-photo-13593452.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+        ],
+        budget: 17000,
+      },
+      {
+        id: 2,
+        title: 'Летний Байкал: Природа и Отдых',
+        desc: 'Идеальный маршрут для знакомства с летней красотой Байкала, его природой и культурой.',
+        total: '70 000 ₽',
+        img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+        tags: ['☀️ Лето', 'РФ'],
+        routeCount: '2.5к',
+        temp: '+20°',
+        weatherIcon: 'Sun',
+        points: [
+          {
+            id: 1,
+            title: 'Иркутск',
+            coords: [52.2868, 104.2818],
+            budget: 8000,
+            date: '2026-07-10',
+            image:
+              'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 2,
+            title: 'Остров Ольхон',
+            coords: [53.0784, 107.4103],
+            budget: 12000,
+            date: '2026-07-12',
+            image:
+              'https://images.pexels.com/photos/20120286/pexels-photo-20120286.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 3,
+            title: 'Аршан',
+            coords: [51.9161, 102.4336],
+            budget: 5000,
+            date: '2026-07-15',
+            image:
+              'https://images.pexels.com/photos/10103723/pexels-photo-10103723.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+        ],
+        budget: 25000,
+      },
+    ],
+    Алтай: [
+      {
+        id: 3,
+        title: 'Алтай: Золотые Горы',
+        desc: 'Дикая природа, бирюзовая Катунь и бескрайние степи.',
+        total: '55 000 ₽',
+        img: 'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+        tags: ['⚡ Активный', 'РФ'],
+        routeCount: '2.8к',
+        temp: '+8°',
+        weatherIcon: 'Sun',
+        points: [
+          {
+            id: 1,
+            title: 'Горно-Алтайск',
+            coords: [51.9562, 85.9616],
+            budget: 7000,
+            date: '2026-08-01',
+            image:
+              'https://images.pexels.com/photos/10103738/pexels-photo-10103738.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 2,
+            title: 'Телецкое озеро',
+            coords: [51.7456, 87.2023],
+            budget: 9000,
+            date: '2026-08-03',
+            image:
+              'https://images.pexels.com/photos/20120286/pexels-photo-20120286.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 3,
+            title: 'Чуйский тракт',
+            coords: [50.315, 86.82],
+            budget: 3000,
+            date: '2026-08-05',
+            image:
+              'https://images.pexels.com/photos/10103720/pexels-photo-10103720.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+        ],
+        budget: 19000,
+      },
+    ],
+    Камчатка: [
+      {
+        id: 4,
+        title: 'Камчатка: Вулканы и Океан',
+        desc: 'Путешествие на край света к огнедышащим горам и Тихому океану.',
+        total: '115 000 ₽',
+        img: 'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
+        tags: ['⛰️ Экстрим', 'РФ'],
+        routeCount: '1.5к',
+        temp: '+5°',
+        weatherIcon: 'Wind',
+        points: [
+          {
+            id: 1,
+            title: 'Петропавловск-Камчатский',
+            coords: [53.0452, 158.6483],
+            budget: 15000,
+            date: '2026-09-01',
+            image:
+              'https://images.pexels.com/photos/20120288/pexels-photo-20120288.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 2,
+            title: 'Вулкан Мутновский',
+            coords: [52.45, 157.6833],
+            budget: 20000,
+            date: '2026-09-03',
+            image:
+              'https://images.pexels.com/photos/13593453/pexels-photo-13593453.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+          {
+            id: 3,
+            title: 'Долина гейзеров',
+            coords: [54.45, 160.0],
+            budget: 25000,
+            date: '2026-09-05',
+            image:
+              'https://images.pexels.com/photos/13593456/pexels-photo-13593456.jpeg?auto=compress&cs=tinysrgb&w=800',
+          },
+        ],
+        budget: 60000,
+      },
+    ],
+    Сочи: [
+      {
+        id: 5,
+        title: 'Сочи: Горы и Море',
+        desc: 'Идеальный баланс: 2 дня в горах, 3 дня на побережье.',
+        total: '45 000 ₽',
+        img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800',
+        tags: ['⚡ Активный', 'РФ'],
+        routeCount: '1.2к',
+        temp: '+12°',
+        weatherIcon: 'CloudSun',
+        points: [
+          {
+            id: 1,
+            title: 'Красная Поляна',
+            coords: [43.6826, 40.2337],
+            budget: 8000,
+            date: '2026-06-01',
+            image:
+              'https://images.unsplash.com/photo-1515861461225-1488dfdaf0a8?q=80&w=2070&auto=format&fit=crop',
+          },
+          {
+            id: 2,
+            title: 'Олимпийский парк',
+            coords: [43.4, 39.95],
+            budget: 4000,
+            date: '2026-06-02',
+            image:
+              'https://images.unsplash.com/photo-1540339832862-47452993c66e?q=80&w=2070&auto=format&fit=crop',
+          },
+          {
+            id: 3,
+            title: 'Дендрарий Сочи',
+            coords: [43.5683, 39.7303],
+            budget: 2000,
+            date: '2026-06-03',
+            image:
+              'https://images.unsplash.com/photo-1564121211835-e88c852648ab?q=80&w=2070&auto=format&fit=crop',
+          },
+        ],
+        budget: 14000,
+      },
+    ],
+  };
 
   return (
     <div className="bg-white min-h-screen w-full max-w-full flex flex-col">
@@ -664,12 +843,31 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
                       </span>
                     </label>
 
-                    <button
-                      onClick={() => onSave?.({ points: routePoints, budget: totalBudget, isActive: isActiveRoute })}
-                      className="w-full md:w-auto px-8 py-4 bg-brand-indigo text-white rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-brand-indigo/20 active:scale-95 transition-all"
-                    >
-                      СОХРАНИТЬ МАРШРУТ
-                    </button>
+                    <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                      <button
+                        onClick={() =>
+                          onChatWithAI?.({
+                            points: routePoints,
+                            budget: plannedBudget,
+                          })
+                        }
+                        className="w-full md:w-auto px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-purple-500/20 active:scale-95 transition-all"
+                      >
+                        РЕДАКТИРОВАТЬ С AI
+                      </button>
+                      <button
+                        onClick={() =>
+                          onSave?.({
+                            points: routePoints,
+                            budget: totalBudget,
+                            isActive: isActiveRoute,
+                          })
+                        }
+                        className="w-full md:w-auto px-8 py-4 bg-brand-indigo text-white rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-brand-indigo/20 hover:brightness-90 active:scale-95 transition-all"
+                      >
+                        СОХРАНИТЬ МАРШРУТ
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -685,7 +883,7 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
                 </div>
                 <input
                   type="text"
-                  defaultValue="Москва"
+                  placeholder="Куда"
                   className="w-full pl-12 pr-4 py-4 bg-slate-50 rounded-xl md:rounded-2xl border-none focus:ring-2 focus:ring-brand-sky/20 outline-none text-slate-800 font-bold text-base md:text-lg transition-all placeholder:text-slate-400"
                 />
               </div>
@@ -714,41 +912,53 @@ function PlannerPage({ onBack, onChatWithAI, onSave, editingRoute }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 pb-24">
-              {POPULAR_TOURS.filter(
-                (tour) =>
-                  selectedFilter === 'Все' ||
-                  tour.tags.some((tag) => tag.includes(selectedFilter)),
-              ).map((res, i) => (
-                <div key={i} className="group cursor-pointer">
-                  <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
-                    <img
-                      src={res.img}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
-                      alt={res.title}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
-                    <div className="absolute top-6 left-6">
-                      <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
-                        <Icon name={res.weatherIcon} size={14} /> {res.temp}
+            <div className="grid grid-cols-2 gap-8 md:gap-12 pb-10">
+              {Object.entries(PREDEFINED_ROUTES_DATA)
+                .flatMap(([direction, routes]) => routes)
+                .filter(
+                  (route) =>
+                    selectedFilter === 'Все' ||
+                    route.tags.some((tag) =>
+                      tag.includes(selectedFilter),
+                    ),
+                )
+                .map((route) => (
+                  <div
+                    key={route.id}
+                    onClick={() => {
+                      console.log('PlannerPage: Selected route:', route);
+                      onTourSelect(route);
+                    }}
+                    className="group cursor-pointer"
+                  >
+                    <div className="relative aspect-[4/5] md:aspect-[16/10] rounded-[3rem] overflow-hidden mb-6 shadow-2xl isolation-auto">
+                      <img
+                        src={route.img}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 rounded-[3rem] will-change-transform"
+                        alt={route.title}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent rounded-[3rem]"></div>
+                      <div className="absolute top-6 left-6">
+                        <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-xl px-3 py-1.5 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg">
+                          <Icon name={route.weatherIcon} size={14} />{' '}
+                          {route.temp}
+                        </div>
+                      </div>
+                      <div className="absolute bottom-6 left-6 right-6 text-left">
+                        <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
+                          {route.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg"></div>
+                        <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
+                          {route.total}
+                        </div>
                       </div>
                     </div>
-                    <div className="absolute bottom-6 left-6 right-6 text-left">
-                      <h3 className="text-2xl md:text-4xl font-black text-white mb-1 tracking-tight leading-none drop-shadow-2xl">
-                        {res.title}
-                      </h3>
-                                            <div className="flex items-center gap-2 text-white/90 font-bold text-xs uppercase tracking-widest mb-4 drop-shadow-lg">
-                                            </div>
-                      <div className="bg-brand-amber text-white px-6 py-2.5 rounded-full text-sm font-black uppercase tracking-widest inline-block shadow-xl">
-                        {res.total}
-                      </div>
-                    </div>
+                    <p className="text-slate-500 text-lg font-medium leading-relaxed px-4 text-left">
+                      {route.desc}
+                    </p>
                   </div>
-                  <p className="text-slate-500 text-lg font-medium leading-relaxed px-4 text-left">
-                    {res.desc}
-                  </p>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
