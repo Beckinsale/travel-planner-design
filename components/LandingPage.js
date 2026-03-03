@@ -187,7 +187,7 @@ function LandingPage({ scenario, setScenario, onStart, onTourSelect }) {
   return (
     <div className="relative flex flex-col min-h-full bg-white">
       {/* 1. CINEMATIC HERO SECTION (Layla Style) */}
-      <div className="relative h-[95vh] md:h-screen flex flex-col items-center justify-center overflow-hidden">
+      <div className="relative h-auto md:h-screen flex flex-col items-center justify-start md:justify-center overflow-hidden py-8 md:py-0">
         {/* Background Layer */}
         <div className="absolute inset-0 z-0">
           <div 
@@ -282,55 +282,55 @@ function LandingPage({ scenario, setScenario, onStart, onTourSelect }) {
               ) : (
                 <div className="bg-white rounded-[2.2rem] md:rounded-[3.5rem] p-4 md:p-8 transition-none">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-black text-slate-500 uppercase ml-3">Откуда</label>
+                    <div className="space-y-2">
+                      <label className="text-sm md:text-base font-black text-slate-700 uppercase ml-3">Откуда</label>
                       <input
                         type="text"
                         placeholder="Москва"
                         value={manualForm.from}
                         onChange={(e) => setManualForm({ ...manualForm, from: e.target.value })}
-                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-400"
                       />
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-black text-slate-500 uppercase ml-3">Куда</label>
+                    <div className="space-y-2">
+                      <label className="text-sm md:text-base font-black text-slate-700 uppercase ml-3">Куда</label>
                       <input
                         type="text"
                         placeholder="Алтай"
                         value={manualForm.to}
                         onChange={(e) => setManualForm({ ...manualForm, to: e.target.value })}
-                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-400"
                       />
                     </div>
-                    <div className="space-y-1 col-span-1 md:col-span-2">
-                      <label className="text-xs font-black text-slate-500 uppercase ml-3">Даты</label>
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-2 col-span-1 md:col-span-2">
+                      <label className="text-sm md:text-base font-black text-slate-700 uppercase ml-3">Даты</label>
+                      <div className="flex flex-col md:flex-row md:items-center gap-2">
                         <input
                           type="date"
                           value={manualForm.dateFrom}
                           onChange={(e) => setManualForm({ ...manualForm, dateFrom: e.target.value })}
                           placeholder="dd/mm/yyyy"
-                          className="w-full px-4 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all text-sm"
+                          className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all text-base"
                         />
-                        <span className="text-slate-400 font-bold shrink-0">—</span>
+                        <span className="text-slate-400 font-bold shrink-0 text-lg hidden md:block">—</span>
                         <input
                           type="date"
                           value={manualForm.dateTo}
                           min={manualForm.dateFrom}
                           onChange={(e) => setManualForm({ ...manualForm, dateTo: e.target.value })}
                           placeholder="dd/mm/yyyy"
-                          className="w-full px-4 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all text-sm"
+                          className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all text-base"
                         />
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-black text-slate-500 uppercase ml-3">Бюджет</label>
+                    <div className="space-y-2">
+                      <label className="text-sm md:text-base font-black text-slate-700 uppercase ml-3">Бюджет</label>
                       <input
                         type="text"
                         placeholder="100 000 ₽"
                         value={manualForm.budget}
                         onChange={(e) => setManualForm({ ...manualForm, budget: e.target.value })}
-                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-300"
+                        className="w-full px-5 py-3 bg-slate-50 rounded-2xl border-2 border-transparent focus:border-brand-sky/20 outline-none font-bold text-slate-700 transition-all placeholder:text-slate-400"
                       />
                     </div>
                   </div>
